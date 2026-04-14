@@ -1,0 +1,130 @@
+.applications-page {
+  display: grid;
+  gap: 1rem;
+}
+
+.applications-header h1 {
+  font-size: 36px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+}
+
+.applications-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.application-card {
+  border-radius: 18px;
+  padding: 1rem;
+  transition:
+    transform 0.22s ease,
+    box-shadow 0.22s ease;
+}
+
+.application-card:hover {
+  transform: translateY(-3px);
+}
+
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.8rem;
+}
+
+.app-header h3 {
+  margin-bottom: 0.2rem;
+}
+
+.company {
+  color: #394ca5;
+  font-weight: 600;
+  font-size: 16px;
+  letter-spacing: 0.01em;
+}
+
+.location,
+.source {
+  color: #5c6990;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.status-badge {
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.36rem 0.72rem;
+  text-transform: uppercase;
+  border: 1px solid transparent;
+}
+
+.status-saved {
+  background: #edf0f4;
+  color: #505f72;
+  border-color: #d2d8e0;
+}
+
+.status-applied {
+  background: #e7f0ff;
+  color: #305fba;
+  border-color: #b8cff8;
+}
+
+.status-interview {
+  background: #fff2df;
+  color: #b1671a;
+  border-color: #f5d0a0;
+}
+
+.status-rejected {
+  background: #ffe8ee;
+  color: #a83a58;
+  border-color: #f2bfd0;
+}
+
+.app-footer {
+  margin-top: 0.8rem;
+}
+
+.app-actions,
+.status-editor {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.btn-edit-status,
+.btn-open-job,
+.status-editor button {
+  padding: 0.68rem 0.95rem;
+  border-radius: 12px;
+  color: #fff;
+  font-weight: 600;
+}
+
+.btn-edit-status {
+  background: linear-gradient(120deg, #4d6bff, #5f54de);
+}
+
+.btn-open-job {
+  background: linear-gradient(120deg, #17b890, #08a579);
+}
+
+.status-editor button:first-of-type {
+  background: linear-gradient(120deg, #4d6bff, #5f54de);
+}
+
+.status-editor button:last-of-type {
+  background: #8a93a9;
+}
+
+.empty-state {
+  border-radius: 18px;
+  padding: 1.4rem;
+  text-align: center;
+  color: #5c688e;
+  background: rgba(255, 255, 255, 0.7);
+}

@@ -1,0 +1,58 @@
+{
+  "properties": [
+    {
+      "name": "jwt.secret",
+      "type": "java.lang.String",
+      "description": "JWT signing secret key."
+    },
+    {
+      "name": "jwt.token-validity-ms",
+      "type": "java.lang.Long",
+      "description": "JWT expiration time in milliseconds.",
+      "defaultValue": 3600000
+    },
+    {
+      "name": "app.cors.allowed-origin",
+      "type": "java.lang.String",
+      "description": "Allowed frontend origin for CORS.",
+      "defaultValue": "http://localhost:3000"
+    },
+    {
+      "name": "jobs.api.adzuna.app-id",
+      "type": "java.lang.String",
+      "description": "Adzuna API app id."
+    },
+    {
+      "name": "jobs.api.adzuna.app-key",
+      "type": "java.lang.String",
+      "description": "Adzuna API app key."
+    },
+    {
+      "name": "jobs.api.jsearch.key",
+      "type": "java.lang.String",
+      "description": "JSearch API key."
+    },
+    {
+      "name": "jobs.api.usajobs.key",
+      "type": "java.lang.String",
+      "description": "USAJOBS API key."
+    },
+    {
+      "name": "jobs.api.usajobs.user-agent",
+      "type": "java.lang.String",
+      "description": "USAJOBS API user agent header value."
+    },
+    {
+      "name": "jobs.scheduler.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Enable periodic job aggregation scheduler.",
+      "defaultValue": true
+    },
+    {
+      "name": "jobs.scheduler.fixed-rate-ms",
+      "type": "java.lang.Long",
+      "description": "Scheduler interval in milliseconds.",
+      "defaultValue": 600000
+    }
+  ]
+}

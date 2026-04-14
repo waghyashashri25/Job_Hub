@@ -1,0 +1,161 @@
+.auth-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 1.2rem;
+}
+
+.auth-card {
+  width: min(520px, 100%);
+  border-radius: 24px;
+  padding: clamp(2rem, 4vw, 3rem);
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 24px 52px rgba(35, 65, 168, 0.2);
+}
+
+.auth-kicker {
+  display: inline-block;
+  font-size: 13px;
+  color: #4f57a9;
+  margin-bottom: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.auth-card h1 {
+  font-size: 36px;
+  margin-bottom: 0.75rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+}
+
+.auth-subtitle {
+  color: #647199;
+  margin-bottom: 1.8rem;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.auth-form {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.auth-form label {
+  margin-top: 0.3rem;
+  font-weight: 600;
+  color: #293458;
+  font-size: 16px;
+  display: block;
+  margin-bottom: 0.4rem;
+}
+
+.btn-auth {
+  margin-top: 0.8rem;
+  padding: 12px 18px;
+  color: #fff;
+  background: linear-gradient(120deg, #4056ef, #6f4bff 60%, #8a53ff);
+  font-weight: 600;
+  font-size: 16px;
+  font-family: "Outfit", sans-serif;
+  box-shadow: 0 10px 24px rgba(64, 86, 239, 0.35);
+  letter-spacing: 0.01em;
+}
+
+.btn-auth:hover {
+  box-shadow: 0 16px 30px rgba(64, 86, 239, 0.35);
+}
+
+.auth-link-text {
+  text-align: center;
+  color: #657295;
+  margin-top: 1.2rem;
+  font-size: 1rem;
+}
+
+.auth-link-text a {
+  color: #3f53df;
+  font-weight: 600;
+}
+
+.auth-divider {
+  display: flex;
+  align-items: center;
+  margin: 1.5rem 0;
+  color: #a0abb8;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    rgba(160, 171, 184, 0.3),
+    rgba(160, 171, 184, 0)
+  );
+}
+
+.auth-divider::before {
+  margin-right: 0.7rem;
+}
+
+.auth-divider::after {
+  margin-left: 0.7rem;
+}
+
+.btn-google {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  padding: 1rem 1.2rem;
+  margin-bottom: 0.8rem;
+  border: 1.5px solid #e8ecf3;
+  border-radius: 0.65rem;
+  background: #fff;
+  color: #293458;
+  font-weight: 600;
+  font-size: 1.02rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.btn-google:hover {
+  border-color: #4056ef;
+  background: rgba(64, 86, 239, 0.03);
+  box-shadow: 0 4px 12px rgba(64, 86, 239, 0.15);
+  transform: translateY(-2px);
+}
+
+.btn-github {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  padding: 1rem 1.2rem;
+  margin-bottom: 0.8rem;
+  border: 1.5px solid #e8ecf3;
+  border-radius: 0.65rem;
+  background: #fff;
+  color: #1b1f23;
+  font-weight: 600;
+  font-size: 1.02rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.btn-github:hover {
+  border-color: #1b1f23;
+  background: rgba(27, 31, 35, 0.04);
+  box-shadow: 0 4px 12px rgba(27, 31, 35, 0.15);
+  transform: translateY(-2px);
+}

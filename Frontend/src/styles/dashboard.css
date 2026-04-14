@@ -1,0 +1,343 @@
+/* Dashboard Components Styling */
+
+/* Dashboard Section Headers */
+.dashboard-section-header {
+  margin-bottom: 1.2rem;
+  padding: 0 1rem;
+}
+
+@media (min-width: 640px) {
+  .dashboard-section-header {
+    padding: 0 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .dashboard-section-header {
+    padding: 0 2rem;
+  }
+}
+
+.dashboard-section-header h2 {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: #101426;
+  letter-spacing: -0.01em;
+  line-height: 1.4;
+}\n\n.section-subtitle {\n  color: #5d6785;\n  font-size: 16px;\n  font-weight: 500;
+
+@media (min-width: 768px) {
+  .section-subtitle {
+    font-size: 1rem;
+  }
+}
+
+/* Trending Skills Section */
+.trending-skills-section {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 20px;
+  padding: 1.5rem;
+  margin: 1.5rem 1rem;
+  box-sizing: border-box;
+}
+
+@media (min-width: 640px) {
+  .trending-skills-section {
+    padding: 2rem;
+    margin: 2rem 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .trending-skills-section {
+    padding: 2rem;
+    margin: 2rem 2rem;
+  }
+}
+
+.trending-skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 1rem;
+}
+
+/* Responsive skill grid */
+@media (min-width: 640px) {
+  .trending-skills-grid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 1.2rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .trending-skills-grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 1.5rem;
+  }
+}
+
+.skill-card {
+  background: rgba(74, 99, 255, 0.05);
+  border: 1px solid rgba(74, 99, 255, 0.1);
+  border-radius: 12px;
+  padding: 1rem;
+  display: grid;
+  gap: 0.7rem;
+  transition: all 0.23s ease;
+}
+
+.skill-card:hover {
+  background: rgba(74, 99, 255, 0.1);
+  border-color: rgba(74, 99, 255, 0.25);
+  transform: translateY(-3px);
+}
+
+.skill-name {
+  font-weight: 600;
+  color: #101426;
+  font-size: 1.05rem;
+  text-align: center;
+}
+
+.skill-bar-container {
+  height: 6px;
+  background: rgba(112, 130, 255, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.skill-bar {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.3s ease;
+  background: linear-gradient(90deg, #4a63ff, #7d43ff);
+}
+
+.skill-stats {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+}
+
+.skill-stats .count {
+  font-weight: 700;
+  color: #4a63ff;
+}
+
+.skill-stats .percentage {
+  color: #5d6785;
+}
+
+/* Search History Section */
+.search-history-section {
+  background: rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.8rem;
+}
+
+.history-header h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #101426;
+}
+
+.history-toggle {
+  background: none;
+  border: none;
+  color: #4a63ff;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.95rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.history-toggle:hover {
+  background: rgba(74, 99, 255, 0.1);
+}
+
+.history-list {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.history-item {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.8rem;
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(112, 130, 255, 0.1);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  color: #293458;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.history-item:hover {
+  background: rgba(74, 99, 255, 0.08);
+  border-color: rgba(74, 99, 255, 0.2);
+  transform: translateX(4px);
+}
+
+.history-item.clear:hover {
+  background: rgba(212, 79, 111, 0.1);
+  border-color: rgba(212, 79, 111, 0.2);
+  color: #d44f6f;
+}
+
+.history-icon {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.history-text {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Recommended Jobs Section */
+.recommended-jobs-section {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 20px;
+  padding: 2rem;
+  margin: 2rem 0;
+}
+
+.recommendations-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.recommendation-wrapper {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.recommendation-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.7rem 1rem;
+  background: rgba(23, 184, 144, 0.1);
+  border: 1px solid rgba(23, 184, 144, 0.2);
+  border-radius: 8px;
+}
+
+.badge-icon {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.badge-text {
+  font-size: 0.9rem;
+  color: #107457;
+  font-weight: 500;
+}
+
+.recommendation-card-container {
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  overflow: hidden;
+  transition: all 0.23s ease;
+}
+
+.recommendation-card-container:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 16px 32px rgba(43, 71, 165, 0.15);
+  border-color: rgba(74, 99, 255, 0.2);
+}
+
+.simple-job-card {
+  padding: 1.2rem;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.simple-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #101426;
+  margin: 0;
+}
+
+.simple-company {
+  font-size: 1rem;
+  color: #3f4fa8;
+  font-weight: 600;
+  margin: 0;
+}
+
+.simple-location {
+  font-size: 0.95rem;
+  color: #52628d;
+  margin: 0;
+}
+
+.simple-source {
+  font-size: 0.9rem;
+  color: #7d8ca3;
+  margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .trending-skills-grid {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  }
+
+  .recommendations-grid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .trending-skills-section,
+  .recommended-jobs-section {
+    padding: 1.5rem;
+  }
+
+  .trending-skills-grid {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  }
+
+  .recommendations-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .skill-card {
+    padding: 0.8rem;
+  }
+
+  .skill-name {
+    font-size: 0.95rem;
+  }
+
+  .dashboard-section-header h2 {
+    font-size: 1.4rem;
+  }
+}

@@ -1,0 +1,95 @@
+# Environment Variables
+.env
+.env.local
+.env.*.local
+.env.production
+
+# IDE and Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+*.sublime-workspace
+*.sublime-project
+.project
+.classpath
+.settings/
+*.iml
+*.iws
+*.ipr
+
+# Frontend - Node/React
+Frontend/node_modules/
+Frontend/build/
+Frontend/dist/
+Frontend/.pnp
+Frontend/.pnp.js
+Frontend/npm-debug.log*
+Frontend/yarn-debug.log*
+Frontend/yarn-error.log*
+Frontend/.eslintcache
+Frontend/.cache/
+Frontend/.next/
+Frontend/out/
+
+# Backend - Maven/Java
+Backend/target/
+Backend/.mvn/wrapper/maven-wrapper.jar
+Backend/build/
+Backend/.gradle/
+Backend/bin/
+Backend/**/target/
+**/*.class
+**/*.jar
+**/*.war
+**/*.nar
+**/*.ear
+**/*.zip
+**/*.tar.gz
+**/*.rar
+!**/src/main/**/target/
+!**/src/test/**/target/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# Maven
+.m2/
+*.lastUpdated
+
+# Gradle (if added later)
+.gradle/
+gradle-app.setting
+!gradle/wrapper/gradle-wrapper.jar
+.gradletasknamecache
+
+# Logs
+*.log
+logs/
+*.log.*
+
+# OS
+Thumbs.db
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Dependencies
+node_modules/
+package-lock.json
+yarn.lock
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+.cache
+
+# System files
+.env.*.example
+*.pem
+*.key
+*.p12
+*.pfx

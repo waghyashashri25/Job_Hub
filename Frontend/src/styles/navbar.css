@@ -1,0 +1,75 @@
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  padding: 1rem 0;
+  font-size: 16px;
+}
+
+.navbar-inner {
+  width: min(1200px, 94vw);
+  margin: 0 auto;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  background: rgba(255, 255, 255, 0.68);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 16px 38px rgba(36, 55, 141, 0.16);
+  padding: 0.78rem 0.95rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.navbar-brand {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: #3343a8;
+  letter-spacing: -0.02em;
+}
+
+.navbar-menu {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.nav-link {
+  padding: 0.65rem 1rem;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 15px;
+  color: #4f5a85;
+  transition:
+    transform 0.2s ease,
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.nav-link:hover,
+.nav-link.active {
+  color: #fff;
+  background: linear-gradient(120deg, #4a63ff, #7348ff);
+}
+
+.btn-logout {
+  padding: 0.54rem 0.92rem;
+  border-radius: 12px;
+  color: #fff;
+  background: linear-gradient(120deg, #e1527a, #d14a5f);
+  font-weight: 700;
+}
+
+@media (max-width: 768px) {
+  .navbar-inner {
+    width: min(1200px, 92vw);
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .navbar-menu {
+    justify-content: space-between;
+  }
+}
