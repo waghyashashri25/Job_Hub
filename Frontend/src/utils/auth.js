@@ -81,6 +81,14 @@ export const isAuthenticated = () => {
   );
 };
 
+export const getUserEmail = () => {
+  const token =
+    localStorage.getItem(TOKEN_KEY) || localStorage.getItem(LEGACY_TOKEN_KEY);
+  if (!token) return null;
+  const payload = parseTokenPayload(token);
+  return payload?.sub || payload?.email || payload?.username || null;
+};
+
 export const logout = () => {
   localStorage.removeItem(TOKEN_KEY);
   localStorage.removeItem(LEGACY_TOKEN_KEY);

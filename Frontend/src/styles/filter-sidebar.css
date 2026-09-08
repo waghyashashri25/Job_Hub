@@ -1,0 +1,454 @@
+/* =========================================================
+   NAUKRI-STYLE FACETED FILTER SIDEBAR
+   ========================================================= */
+
+.filter-sidebar-wrapper {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  box-shadow: 0 2px 12px -2px rgba(15, 23, 42, 0.05);
+  position: sticky;
+  top: 80px;
+  max-height: calc(100vh - 100px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* Sidebar Top Header */
+.filter-sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.1rem 1.25rem;
+  border-bottom: 1px solid #e2e8f0;
+  background: #ffffff;
+  flex-shrink: 0;
+}
+
+.filter-sidebar-title {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.01em;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.filter-badge-count {
+  background: #eff6ff;
+  color: #2563eb;
+  border: 1px solid #bfdbfe;
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 0.15rem 0.45rem;
+  border-radius: 12px;
+}
+
+.filter-clear-all-btn {
+  background: none;
+  border: none;
+  color: #2563eb;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  transition: all 0.15s ease;
+}
+
+.filter-clear-all-btn:hover {
+  background: #eff6ff;
+  text-decoration: underline;
+}
+
+/* Scrollable Sections Area */
+.filter-sidebar-content {
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 0 1.25rem 1.5rem;
+  flex: 1;
+}
+
+/* Custom Thin Scrollbar */
+.filter-sidebar-content::-webkit-scrollbar {
+  width: 5px;
+}
+
+.filter-sidebar-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.filter-sidebar-content::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.filter-sidebar-content::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Accordion Section */
+.filter-section {
+  padding: 1rem 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.filter-section:last-child {
+  border-bottom: none;
+}
+
+.filter-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+  user-select: none;
+}
+
+.filter-section-title {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.filter-chevron {
+  color: #64748b;
+  transition: transform 0.2s ease;
+}
+
+.filter-chevron.collapsed {
+  transform: rotate(180deg);
+}
+
+/* Options List */
+.filter-options-list {
+  margin-top: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.filter-option-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  cursor: pointer;
+  padding: 0.2rem 0;
+  font-size: 0.85rem;
+  color: #334155;
+  transition: color 0.15s ease;
+  user-select: none;
+}
+
+.filter-option-item:hover {
+  color: #0f172a;
+}
+
+.filter-option-left {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-width: 0;
+  flex: 1;
+}
+
+.filter-checkbox {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  accent-color: #2563eb;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.filter-label-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.85rem;
+  line-height: 1.3;
+}
+
+.filter-option-item.active .filter-label-text {
+  font-weight: 700;
+  color: #2563eb;
+}
+
+.filter-count {
+  font-size: 0.78rem;
+  color: #64748b;
+  font-weight: 500;
+  flex-shrink: 0;
+  margin-left: 0.25rem;
+}
+
+/* View More Button */
+.filter-view-more-btn {
+  background: none;
+  border: none;
+  color: #2563eb;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0.35rem 0 0;
+  text-align: left;
+  display: inline-block;
+  transition: opacity 0.15s ease;
+}
+
+.filter-view-more-btn:hover {
+  text-decoration: underline;
+  opacity: 0.85;
+}
+
+/* Freshness Section in Sidebar */
+.filter-freshness-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.filter-freshness-header-right {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.filter-freshness-current-label {
+  font-size: 0.82rem;
+  color: #64748b;
+  font-weight: 500;
+  transition: all 0.15s ease;
+}
+
+.filter-freshness-current-label.selected {
+  color: #2563eb;
+  font-weight: 600;
+}
+
+.filter-freshness-select {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  font-size: 0.85rem;
+  font-family: inherit;
+  color: #0f172a;
+  background-color: #f8fafc;
+  outline: none;
+  cursor: pointer;
+  margin-top: 0.65rem;
+  transition: all 0.2s ease;
+}
+
+.filter-freshness-select:focus {
+  border-color: #2563eb;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+
+/* Experience Range Slider */
+.experience-slider-container {
+  margin-top: 1rem;
+  padding: 0 0.25rem;
+}
+
+.experience-slider-bubble-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 0.35rem;
+}
+
+.experience-slider-bubble {
+  background: #0f172a;
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.2rem 0.55rem;
+  border-radius: 12px;
+  display: inline-block;
+}
+
+.experience-slider {
+  width: 100%;
+  height: 5px;
+  border-radius: 3px;
+  background: #e2e8f0;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+}
+
+.experience-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #0f172a;
+  border: 2px solid #ffffff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.experience-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+}
+
+.experience-slider-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.5rem;
+  font-size: 0.78rem;
+  color: #64748b;
+  font-weight: 600;
+}
+
+/* Two-Column Layout for Jobs Page */
+.jobs-main-layout {
+  display: grid;
+  grid-template-columns: 290px 1fr;
+  gap: 1.75rem;
+  align-items: start;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.jobs-filter-sidebar-col {
+  width: 290px;
+}
+
+.jobs-results-col {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* Active Filter Chips Bar (above results) */
+.active-filters-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 0.65rem 0.9rem;
+}
+
+.active-filters-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-right: 0.2rem;
+}
+
+.active-filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: #ffffff;
+  border: 1px solid #bfdbfe;
+  color: #1d4ed8;
+  padding: 0.22rem 0.55rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.active-filter-chip-remove {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #2563eb;
+  font-size: 0.9rem;
+  line-height: 1;
+  padding: 0;
+  margin-left: 0.15rem;
+}
+
+.active-filter-chip-remove:hover {
+  color: #dc2626;
+}
+
+.active-filters-clear-btn {
+  background: none;
+  border: none;
+  color: #dc2626;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  margin-left: auto;
+  text-decoration: underline;
+  padding: 0.2rem;
+}
+
+/* Mobile Filter Drawer Button */
+.mobile-filter-toggle-btn {
+  display: none;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1rem;
+  background: #ffffff;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: #0f172a;
+  cursor: pointer;
+  margin-bottom: 0.75rem;
+  width: 100%;
+  justify-content: center;
+}
+
+@media (max-width: 980px) {
+  .jobs-main-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .mobile-filter-toggle-btn {
+    display: inline-flex;
+  }
+
+  .jobs-filter-sidebar-col {
+    width: 100%;
+    display: none;
+  }
+
+  .jobs-filter-sidebar-col.mobile-open {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(4px);
+    padding: 1.5rem;
+    overflow-y: auto;
+  }
+
+  .jobs-filter-sidebar-col.mobile-open .filter-sidebar-wrapper {
+    max-width: 420px;
+    margin: 0 auto;
+    max-height: 85vh;
+  }
+}

@@ -24,7 +24,15 @@ axiosInstance.interceptors.request.use(
       token ? "present" : "missing",
     );
 
-    if (token) {
+    const isPublicAuthEndpoint =
+      config.url?.includes("/users/signup") ||
+      config.url?.includes("/users/check-duplicate") ||
+      config.url?.includes("/users/send-otp") ||
+      config.url?.includes("/users/verify-otp") ||
+      config.url?.includes("/users/login") ||
+      config.url?.includes("/users/forgot-password");
+
+    if (token && !isPublicAuthEndpoint) {
       config.headers.Authorization = `Bearer ${token}`;
       console.debug("[API Request] Authorization header set with Bearer token");
     }
@@ -39,7 +47,9 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    const isAuthRoute = window.location.pathname.includes("/login") || window.location.pathname.includes("/signup");
+
+    if (error.response?.status === 401 && !isAuthRoute) {
       localStorage.removeItem("token");
       localStorage.removeItem("jwtToken");
       localStorage.removeItem("userRole");
@@ -47,15 +57,19 @@ axiosInstance.interceptors.response.use(
       return Promise.reject(new Error("Session expired. Please login again."));
     }
 
+    const serverMsg =
+      error.response?.data?.error ||
+      error.response?.data?.message ||
+      (typeof error.response?.data === "string" ? error.response.data : null);
+
     if (error.response?.status === 403) {
       return Promise.reject(
-        new Error("You are not allowed to perform this action."),
+        new Error(serverMsg || "You are not allowed to perform this action."),
       );
     }
 
     const message =
-      error.response?.data?.message ||
-      error.response?.data ||
+      serverMsg ||
       error.message ||
       "Unexpected error occurred.";
 

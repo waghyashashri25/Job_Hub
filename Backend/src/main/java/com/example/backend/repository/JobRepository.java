@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface JobRepository extends JpaRepository<Job, Long> {
@@ -140,4 +141,25 @@ public interface JobRepository extends JpaRepository<Job, Long> {
      */
     @Query("SELECT COUNT(j) FROM Job j WHERE LOWER(j.source) = LOWER(:source)")
     long countBySource(@Param("source") String source);
+
+    /**
+     * Fingerprint-based fast lookup for cross-platform deduplication
+     */
+    Optional<Job> findFirstByFingerprint(String fingerprint);
+
+    boolean existsByFingerprint(String fingerprint);
+
+    @Query("SELECT j.source, COUNT(j) FROM Job j WHERE j.source IS NOT NULL AND j.source != '' GROUP BY j.source ORDER BY COUNT(j) DESC")
+    List<Object[]> countJobsBySource();
+
+    List<Job> findTop50ByOrderByIdDesc();
+
+    @Query("SELECT j FROM Job j WHERE j.postedByEmail IS NOT NULL OR LOWER(j.source) = 'recruiter direct' ORDER BY j.id DESC")
+    List<Job> findRecruiterDirectJobs();
+
+    Page<Job> findAllByOrderByIdDesc(Pageable pageable);
+
+    List<Job> findByPostedByEmailOrderByIdDesc(String postedByEmail);
+
+    long countByPostedByEmail(String postedByEmail);
 }

@@ -65,6 +65,10 @@ public class JwtFilter extends OncePerRequestFilter {
                         role = "USER";
                     }
 
+                    role = role.trim();
+                    if (role.toUpperCase().startsWith("ROLE_")) {
+                        role = role.substring(5);
+                    }
                     role = role.toUpperCase();
 
                     UsernamePasswordAuthenticationToken authentication =

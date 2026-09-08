@@ -24,7 +24,7 @@ const TrendingSkillsTab = ({ jobs }) => {
         percentage: Math.round((count / jobs.length) * 100),
       }))
       .sort((a, b) => b.count - a.count)
-      .slice(0, 24); // Top 24 skills
+      .slice(0, 24);
   }, [jobs]);
 
   const maxCount = useMemo(() => {
@@ -68,9 +68,9 @@ const TrendingSkillsTab = ({ jobs }) => {
     <div className="trending-skills-tab">
       {/* Header */}
       <div className="tab-header">
-        <h1>Trending Skills Market</h1>
+        <h1>Trending Technical Skills Market</h1>
         <p className="subtitle">
-          Most in-demand skills across {jobs.length} job listings
+          Real-time in-demand skills aggregated across {jobs.length} active job listings
         </p>
       </div>
 
@@ -78,24 +78,24 @@ const TrendingSkillsTab = ({ jobs }) => {
         <>
           {/* Overall Trending Skills */}
           <section className="trending-section">
-            <h2>🔥 Top {Math.min(12, trendingSkills.length)} Skills</h2>
-            <div className="skills-bar-chart">
+            <h2 style={{ fontSize: "1.25rem", fontWeight: 800, color: "#0f172a", marginBottom: "1.25rem" }}>
+              Top In-Demand Technical Skills
+            </h2>
+            <div style={{ display: "grid", gap: "0.85rem" }}>
               {trendingSkills.slice(0, 12).map((item, index) => (
-                <div key={index} className="skill-bar-item">
-                  <div className="skill-info">
-                    <span className="skill-name">{item.skill}</span>
-                    <span className="skill-count">{item.count} jobs</span>
-                  </div>
-                  <div className="skill-bar-container">
+                <div key={index} style={{ display: "grid", gridTemplateColumns: "140px 1fr 60px", alignItems: "center", gap: "1rem" }}>
+                  <span style={{ fontWeight: 700, color: "#0f172a", fontSize: "0.9rem" }}>{item.skill}</span>
+                  <div style={{ height: "8px", background: "#f1f5f9", borderRadius: "999px", overflow: "hidden" }}>
                     <div
-                      className="skill-bar"
                       style={{
                         width: `${(item.count / maxCount) * 100}%`,
-                        backgroundColor: `hsl(${(index * 30) % 360}, 70%, 55%)`,
+                        height: "100%",
+                        background: "#2563eb",
+                        borderRadius: "999px",
                       }}
                     />
                   </div>
-                  <span className="skill-percentage">{item.percentage}%</span>
+                  <span style={{ fontSize: "0.82rem", fontWeight: 600, color: "#64748b", textAlign: "right" }}>{item.count} jobs</span>
                 </div>
               ))}
             </div>
@@ -103,22 +103,22 @@ const TrendingSkillsTab = ({ jobs }) => {
 
           {/* Skills by Category */}
           <section className="trending-section">
-            <h2>📋 Skills by Category</h2>
-            <div className="category-skills">
+            <h2 style={{ fontSize: "1.25rem", fontWeight: 800, color: "#0f172a", marginBottom: "1.25rem" }}>
+              Skills Categorization Breakdown
+            </h2>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "1.25rem" }}>
               {topCategories.map(
                 (cat) =>
                   cat.skills.length > 0 && (
-                    <div key={cat.category} className="category-card">
-                      <h3 className="category-title">
-                        {cat.category.charAt(0).toUpperCase() +
-                          cat.category.slice(1)}
+                    <div key={cat.category} style={{ background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: "12px", padding: "1.25rem" }}>
+                      <h3 style={{ fontSize: "1rem", fontWeight: 700, color: "#0f172a", textTransform: "capitalize", marginBottom: "0.75rem" }}>
+                        {cat.category}
                       </h3>
-                      <div className="category-tags">
+                      <div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem" }}>
                         {cat.skills.slice(0, 8).map((skill, idx) => (
-                          <div key={idx} className="skill-tag">
-                            <span className="tag-name">{skill.skill}</span>
-                            <span className="tag-count">{skill.count}</span>
-                          </div>
+                          <span key={idx} style={{ background: "#eff6ff", color: "#1d4ed8", padding: "0.25rem 0.6rem", borderRadius: "6px", fontSize: "0.8rem", fontWeight: 600, border: "1px solid #bfdbfe" }}>
+                            {skill.skill} ({skill.count})
+                          </span>
                         ))}
                       </div>
                     </div>
@@ -129,39 +129,30 @@ const TrendingSkillsTab = ({ jobs }) => {
 
           {/* Market Insights */}
           <section className="trending-section">
-            <h2>📊 Market Insights</h2>
-            <div className="insights-grid">
-              <div className="insight-card">
-                <p className="insight-label">Total Skills Identified</p>
-                <p className="insight-value">{trendingSkills.length}</p>
+            <h2 style={{ fontSize: "1.25rem", fontWeight: 800, color: "#0f172a", marginBottom: "1.25rem" }}>
+              Market Density Metrics
+            </h2>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1.25rem" }}>
+              <div style={{ background: "#f8fafc", border: "1px solid #e2e8f0", padding: "1.25rem", borderRadius: "12px", textAlign: "center" }}>
+                <p style={{ color: "#64748b", fontSize: "0.82rem", textTransform: "uppercase", fontWeight: 700, margin: "0 0 0.25rem" }}>Total Skills Tracked</p>
+                <p style={{ fontSize: "1.75rem", fontWeight: 800, color: "#0f172a", margin: 0 }}>{trendingSkills.length}</p>
               </div>
-              <div className="insight-card">
-                <p className="insight-label">Most In-Demand</p>
-                <p className="insight-value">{trendingSkills[0]?.skill}</p>
+              <div style={{ background: "#f8fafc", border: "1px solid #e2e8f0", padding: "1.25rem", borderRadius: "12px", textAlign: "center" }}>
+                <p style={{ color: "#64748b", fontSize: "0.82rem", textTransform: "uppercase", fontWeight: 700, margin: "0 0 0.25rem" }}>Most In-Demand</p>
+                <p style={{ fontSize: "1.75rem", fontWeight: 800, color: "#2563eb", margin: 0 }}>{trendingSkills[0]?.skill || "Java"}</p>
               </div>
-              <div className="insight-card">
-                <p className="insight-label">Avg Jobs per Skill</p>
-                <p className="insight-value">
-                  {Math.round(
-                    trendingSkills.reduce((sum, s) => sum + s.count, 0) /
-                      trendingSkills.length,
-                  )}
-                </p>
-              </div>
-              <div className="insight-card">
-                <p className="insight-label">Top Skill Frequency</p>
-                <p className="insight-value">
-                  {trendingSkills[0]?.percentage}%
-                </p>
+              <div style={{ background: "#f8fafc", border: "1px solid #e2e8f0", padding: "1.25rem", borderRadius: "12px", textAlign: "center" }}>
+                <p style={{ color: "#64748b", fontSize: "0.82rem", textTransform: "uppercase", fontWeight: 700, margin: "0 0 0.25rem" }}>Top Skill Frequency</p>
+                <p style={{ fontSize: "1.75rem", fontWeight: 800, color: "#166534", margin: 0 }}>{trendingSkills[0]?.percentage || 0}%</p>
               </div>
             </div>
           </section>
         </>
       ) : (
         <div className="empty-state">
-          <p className="empty-icon">📊</p>
-          <h3>No Skills Data</h3>
-          <p>Load some jobs to see trending skills</p>
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="1.5" style={{ marginBottom: "1rem" }}><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+          <h3>No Skills Data Available</h3>
+          <p>Search and load jobs to inspect market skill demand.</p>
         </div>
       )}
     </div>

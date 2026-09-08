@@ -263,15 +263,18 @@ const JobListing = () => {
             <h2>Available Positions ({filteredJobs.length})</h2>
           </div>
           <div className="jobs-grid">
-            {filteredJobs.map((job) => (
-              <JobCard
-                key={job.id}
-                job={job}
-                isSaved={savedJobIds.has(job.id)}
-                onSave={handleSaveJob}
-                onApply={handleApply}
-              />
-            ))}
+            {filteredJobs.map((job, idx) => {
+              const jobKey = job.id ? `job-${job.id}` : `listing-${idx}-${(job.title || "").replace(/\W/g, "")}`;
+              return (
+                <JobCard
+                  key={jobKey}
+                  job={job}
+                  isSaved={job.id ? savedJobIds.has(job.id) : false}
+                  onSave={handleSaveJob}
+                  onApply={handleApply}
+                />
+              );
+            })}
           </div>
         </div>
       )}

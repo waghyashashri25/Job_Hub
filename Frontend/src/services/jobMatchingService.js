@@ -83,19 +83,11 @@ export const getUserProfile = () => {
     console.error("Error parsing user profile:", e);
   }
 
-  // Default profile if not set
+  // Default profile if not set - ZERO fake skills
   return {
-    skills: [
-      "React",
-      "JavaScript",
-      "Java",
-      "Spring Boot",
-      "MySQL",
-      "Git",
-      "Docker",
-    ],
-    jobTitle: "Full Stack Developer",
-    experience: 3,
+    skills: [],
+    jobTitle: "",
+    experience: 0,
   };
 };
 
@@ -111,10 +103,13 @@ export const calculateMatchPercentage = (job, userSkills = null) => {
     userSkills = profile.skills || [];
   }
 
+  // If user has not uploaded resume or configured skills, match is 0
+  if (!userSkills || userSkills.length === 0) return 0;
+
   if (!job || !job.description) return 0;
 
   const requiredSkills = extractSkillsFromJob(job.description);
-  if (requiredSkills.length === 0) return 50; // Default if we can't extract skills
+  if (requiredSkills.length === 0) return 0;
 
   const matchedSkills = requiredSkills.filter((skill) =>
     userSkills.some(
@@ -126,7 +121,7 @@ export const calculateMatchPercentage = (job, userSkills = null) => {
     (matchedSkills.length / requiredSkills.length) * 100,
   );
 
-  return Math.min(100, matchPercentage + 10); // Add small buffer for other factors
+  return Math.min(100, matchPercentage);
 };
 
 /**
@@ -141,7 +136,15 @@ export const getSkillGap = (job, userSkills = null) => {
     userSkills = profile.skills || [];
   }
 
-  const requiredSkills = extractSkillsFromJob(job.description || "");
+  const requiredSkills = extractSkillsFromJob(job?.description || "");
+  if (!userSkills || userSkills.length === 0) {
+    return {
+      missing: requiredSkills,
+      matched: [],
+      totalRequired: requiredSkills.length,
+      totalMatched: 0,
+    };
+  }
 
   const missingSkills = requiredSkills.filter(
     (skill) =>
@@ -174,18 +177,14 @@ export const calculateInterviewProbability = (
   matchPercentage,
   skillGap = null,
 ) => {
+  if (!matchPercentage || matchPercentage === 0) return 0;
   let probability = matchPercentage * 0.6; // 60% weighted on match
 
   if (skillGap && skillGap.totalRequired > 0) {
-    // Add bonus for high skill coverage
     const coverage = skillGap.totalMatched / skillGap.totalRequired;
     const coverageBonus = coverage * 40; // Up to 40% bonus
     probability += coverageBonus;
   }
-
-  // Add randomness to make it realistic (±5%)
-  const randomVariance = (Math.random() - 0.5) * 10;
-  probability += randomVariance;
 
   return Math.min(100, Math.max(0, Math.round(probability)));
 };
@@ -198,7 +197,8 @@ export const calculateInterviewProbability = (
 export const getConfidenceLevel = (matchPercentage) => {
   if (matchPercentage >= 75) return "HIGH";
   if (matchPercentage >= 50) return "MEDIUM";
-  return "LOW";
+  if (matchPercentage > 0) return "LOW";
+  return "PENDING";
 };
 
 /**
@@ -247,6 +247,195 @@ export const enrichJobWithAnalysis = (job, userSkills = null) => {
 };
 
 /**
+ * Generates a customized, high-converting cover letter tailoring candidate profile/resume to the job
+ */
+export const generateTailoredCoverLetter = (job, userProfile = null, resumeData = null) => {
+  if (!job) return "";
+
+  // 1. Candidate Info Extraction
+  const name =
+    userProfile?.name ||
+    userProfile?.fullName ||
+    resumeData?.name ||
+    resumeData?.fullName ||
+    "Applicant";
+
+  const currentRole =
+    userProfile?.jobTitle ||
+    resumeData?.jobTitle ||
+    resumeData?.title ||
+    job.title ||
+    "Software Engineer";
+
+  const expYears =
+    userProfile?.experience ||
+    resumeData?.experienceYears ||
+    resumeData?.experience ||
+    3;
+
+  // Candidate skills from Profile and Parsed Resume
+  let skills = [];
+  if (Array.isArray(userProfile?.skills)) {
+    skills = [...userProfile.skills];
+  } else if (typeof userProfile?.skills === "string") {
+    skills = userProfile.skills.split(",").map((s) => s.trim()).filter(Boolean);
+  }
+
+  if (Array.isArray(resumeData?.skills)) {
+    skills = [...new Set([...skills, ...resumeData.skills])];
+  }
+
+  // 2. Job Info Extraction
+  const jobTitle = job.title || "Target Role";
+  const company = job.company || "Hiring Team";
+  const location = job.location || "";
+  const jobSkills = extractSkillsFromJob(job.description || job.title || "");
+
+  // Intersection of candidate skills with job skills
+  const matchedSkills = skills.filter((sk) =>
+    jobSkills.some((jsk) => jsk.toLowerCase() === sk.toLowerCase())
+  );
+
+  const highlightSkills = matchedSkills.length > 0 ? matchedSkills : (skills.length > 0 ? skills.slice(0, 4) : jobSkills.slice(0, 4));
+  const skillsPhrase = highlightSkills.length > 0 ? highlightSkills.join(", ") : "modern engineering practices, scalable architecture, and problem solving";
+
+  const letter = `Dear Hiring Team at ${company},
+
+I am writing to express my strong interest in the ${jobTitle} position at ${company}${location ? ` (${location})` : ""}. With over ${expYears}+ years of experience as a ${currentRole} and practical expertise in ${skillsPhrase}, I am confident in my ability to deliver immediate value to your engineering team.
+
+Throughout my career, I have focused on building robust, scalable solutions, maintaining high code quality, and driving technical excellence. My hands-on background in ${skillsPhrase} aligns directly with the core technical requirements outlined in your opening.
+
+I admire ${company}'s work and culture, and I would welcome the opportunity to discuss how my skill set, enthusiasm, and track record can contribute to your team's ongoing success.
+
+Thank you for your time and consideration.
+
+Sincerely,
+${name}`;
+
+  return letter;
+};
+
+/**
+ * Auto-frame contextual follow-up message to recruiter based on application status, elapsed date & schedule
+ */
+export const generateCandidateFollowUpMessage = (app, userProfile = null, resumeData = null) => {
+  if (!app) return "";
+
+  const name = userProfile?.name || resumeData?.name || localStorage.getItem("userName") || "Yashashri Wagh";
+  const jobTitle = app.jobTitle || app.job?.title || "Role";
+  const company = app.company || app.job?.company || "Hiring Team";
+  const status = (app.status || "APPLIED").toUpperCase();
+
+  // Format application date & days ago
+  let dateText = "";
+  let daysAgoText = "";
+  const rawDate = app.savedAt || app.appliedDate;
+  if (rawDate) {
+    try {
+      const d = Array.isArray(rawDate)
+        ? new Date(rawDate[0], rawDate[1] - 1, rawDate[2], rawDate[3] || 0, rawDate[4] || 0)
+        : new Date(rawDate);
+      if (!isNaN(d.getTime())) {
+        dateText = d.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
+        const diffHours = Math.floor((new Date() - d) / (1000 * 60 * 60));
+        if (diffHours < 24) {
+          daysAgoText = "earlier today";
+        } else {
+          const days = Math.floor(diffHours / 24);
+          daysAgoText = days === 1 ? "yesterday" : `${days} days ago`;
+        }
+      }
+    } catch (e) {}
+  }
+
+  const interviewTime = app.interviewTime || "";
+  const interviewRound = app.interviewRound || "";
+  const offerDesig = app.offerDesignation || jobTitle;
+  const offerJoining = app.offerJoiningDate || "";
+
+  switch (status) {
+    case "SHORTLISTED":
+      return `Dear Hiring Team at ${company},
+
+Thank you very much for shortlisting my profile for the ${jobTitle} position! I am excited about the opportunity to contribute to ${company}.
+
+Could you please share the next steps in your evaluation process and when we might schedule the preliminary technical or hiring discussion?
+
+Looking forward to speaking with the team soon.
+
+Best regards,
+${name}`;
+
+    case "INTERVIEW":
+      if (interviewTime) {
+        return `Dear Hiring Team at ${company},
+
+I am writing to confirm my attendance for the upcoming ${interviewRound || "Interview Round"} scheduled for ${interviewTime} regarding the ${jobTitle} role.
+
+I am thoroughly prepared and look forward to discussing how my background and skills can deliver value for ${company}. Please let me know if there are any specific topics or code samples I should prepare in advance.
+
+Thank you again,
+${name}`;
+      } else {
+        return `Dear Hiring Team at ${company},
+
+Thank you for the opportunity to interview for the ${jobTitle} position. I truly enjoyed our conversation and learning more about ${company}'s technical roadmap and team culture.
+
+I wanted to follow up and see if there are any updates regarding the next steps or if you need any additional materials or code samples from my side.
+
+Thank you again for your time and consideration!
+
+Best regards,
+${name}`;
+      }
+
+    case "OFFER":
+      return `Dear Hiring Team at ${company},
+
+Thank you very much for extending the formal offer of employment for the ${offerDesig} position! I am honored and thrilled about the prospect of joining ${company}.
+
+${offerJoining ? `I have reviewed the terms and would like to confirm the target start date (${offerJoining}) and discuss the next onboarding steps.` : "I am reviewing the offer details and look forward to finalizing the onboarding process."}
+
+Thank you once again for this wonderful opportunity!
+
+Warm regards,
+${name}`;
+
+    case "REJECTED":
+      return `Dear Hiring Team at ${company},
+
+Thank you for considering my application for the ${jobTitle} role and for keeping me updated.
+
+While I understand the decision for this specific opening, I have great respect for ${company} and would love to stay in touch for future opportunities where my skills may be a strong fit.
+
+Wishing you and the team continued success!
+
+Best regards,
+${name}`;
+
+    case "APPLIED":
+    case "SAVED":
+    default:
+      const timingPhrase = dateText
+        ? `on ${dateText} (${daysAgoText || "recently"})`
+        : "recently";
+
+      return `Dear Hiring Team at ${company},
+
+I hope this message finds you well. I submitted my application for the ${jobTitle} role ${timingPhrase}.
+
+I wanted to politely follow up to check if you have had an opportunity to review my profile, and to reiterate my strong enthusiasm for this position at ${company}.
+
+Please let me know if you would like me to provide any additional details, portfolio links, or references. I would welcome the chance to speak with you.
+
+Thank you for your time and consideration!
+
+Sincerely,
+${name}`;
+  }
+};
+
+/**
  * Save user profile
  * @param {Object} profile User profile
  */
@@ -260,7 +449,7 @@ export const saveUserProfile = (profile) => {
   }
 };
 
-export default {
+const jobMatchingService = {
   extractSkillsFromJob,
   getUserProfile,
   calculateMatchPercentage,
@@ -269,5 +458,10 @@ export default {
   getConfidenceLevel,
   getConfidenceColor,
   enrichJobWithAnalysis,
+  generateTailoredCoverLetter,
+  generateCandidateFollowUpMessage,
   saveUserProfile,
 };
+
+export default jobMatchingService;
+

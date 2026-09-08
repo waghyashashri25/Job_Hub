@@ -1,5 +1,6 @@
 package com.example.backend.config;
 
+import org.springframework.http.HttpMethod;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -36,16 +37,35 @@ public class SecurityConfig {
             .formLogin(form -> form.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/users/signup", "/api/users/login", "/error").permitAll()
+                .requestMatchers(
+                    "/api/users/signup",
+                    "/api/users/signup/**",
+                    "/api/users/login",
+                    "/api/users/login/**",
+                    "/api/users/login-init",
+                    "/api/users/login-init/**",
+                    "/api/users/login-verify",
+                    "/api/users/login-verify/**",
+                    "/api/users/check-duplicate",
+                    "/api/users/check-duplicate/**",
+                    "/api/users/send-otp",
+                    "/api/users/send-otp/**",
+                    "/api/users/verify-otp",
+                    "/api/users/verify-otp/**",
+                    "/api/users/forgot-password/**",
+                    "/error"
+                ).permitAll()
                 .requestMatchers("/api/oauth/**").permitAll()
-                .requestMatchers("/api/jobs/all", "/api/jobs/search", "/api/jobs/source/**", "/api/jobs/discovery").permitAll()
-                .requestMatchers("/api/applications/save", "/api/applications/user").permitAll()
+                .requestMatchers("/api/jobs", "/api/jobs/", "/api/jobs/all", "/api/jobs/search", "/api/jobs/search/**", "/api/jobs/source/**", "/api/jobs/discovery", "/api/jobs/internships", "/api/jobs/sync-internships", "/api/jobs/sync").permitAll()
+                .requestMatchers("/api/applications", "/api/applications/**").permitAll()
+                .requestMatchers("/api/resume/**", "/api/career/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/admin/announcement").permitAll()
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                .requestMatchers("/api/recruiter/**").hasAnyRole("RECRUITER", "ADMIN")
                 .requestMatchers("/api/users/create-admin").hasRole("ADMIN")
                 .requestMatchers("/api/jobs/create", "/api/jobs/aggregate").hasRole("ADMIN")
-                .requestMatchers("/api/applications/**").hasAnyRole("USER", "ADMIN")
-                .requestMatchers("/api/jobs/**").hasAnyRole("USER", "ADMIN")
-                .requestMatchers("/api/users/**").hasAnyRole("USER", "ADMIN")
+                .requestMatchers("/api/jobs/**").hasAnyRole("USER", "ADMIN", "RECRUITER")
+                .requestMatchers("/api/users/**").hasAnyRole("USER", "ADMIN", "RECRUITER")
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
@@ -74,14 +94,19 @@ public class SecurityConfig {
                 "http://localhost:3000",
                 "http://localhost:3001",
                 "http://localhost:3002",
+                "http://localhost:5173",
+                "http://localhost:5174",
                 "http://127.0.0.1:3000",
                 "http://127.0.0.1:3001",
-                "http://127.0.0.1:3002"
+                "http://127.0.0.1:3002",
+                "http://127.0.0.1:5173",
+                "http://127.0.0.1:5174"
             ));
         }
         
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+        configuration.setAllowedHeaders(List.of("*"));
+        configuration.setExposedHeaders(List.of("Authorization", "Content-Type"));
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);
 

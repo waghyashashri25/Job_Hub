@@ -82,6 +82,7 @@ package-lock.json
 yarn.lock
 
 # Temporary files
+scratch/
 tmp/
 temp/
 *.tmp

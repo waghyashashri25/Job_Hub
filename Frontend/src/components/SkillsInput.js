@@ -29,8 +29,7 @@ const SkillsInput = ({ onSkillsUpdated = null, compact = false }) => {
       setExperience(exp || 0);
     } catch (err) {
       console.log("No skills saved yet or error loading:", err);
-      // Use default skills if none exist
-      setSkills("Java, Spring Boot, React, MySQL, Git");
+      setSkills("");
     }
   };
 

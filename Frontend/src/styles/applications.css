@@ -1,130 +1,301 @@
+/* =========================================================
+   LUXURY MONOCHROME OBSIDIAN APPLICATIONS STYLING
+   ========================================================= */
+
 .applications-page {
   display: grid;
-  gap: 1rem;
+  gap: 1.5rem;
+  color: #fafafa;
 }
 
 .applications-header h1 {
-  font-size: 36px;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  line-height: 1.3;
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.04em;
+  line-height: 1.2;
 }
 
 .applications-list {
   display: grid;
-  gap: 1rem;
+  gap: 1.25rem;
 }
 
 .application-card {
   border-radius: 18px;
-  padding: 1rem;
-  transition:
-    transform 0.22s ease,
-    box-shadow 0.22s ease;
+  padding: 1.5rem;
+  background: rgba(18, 18, 22, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  transition: all 0.25s ease;
 }
 
 .application-card:hover {
   transform: translateY(-3px);
+  border-color: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 12px 35px -5px rgba(0, 0, 0, 0.8);
 }
 
 .app-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 0.8rem;
+  gap: 1rem;
 }
 
 .app-header h3 {
-  margin-bottom: 0.2rem;
+  margin-bottom: 0.3rem;
+  color: #ffffff;
+  font-size: 1.25rem;
+  font-weight: 700;
 }
 
 .company {
-  color: #394ca5;
-  font-weight: 600;
-  font-size: 16px;
-  letter-spacing: 0.01em;
+  color: #a1a1aa;
+  font-weight: 500;
+  font-size: 0.95rem;
 }
 
 .location,
 .source {
-  color: #5c6990;
-  font-size: 15px;
-  font-weight: 500;
+  color: #71717a;
+  font-size: 0.88rem;
 }
 
 .status-badge {
   border-radius: 999px;
   font-size: 0.75rem;
   font-weight: 700;
-  padding: 0.36rem 0.72rem;
+  padding: 0.35rem 0.85rem;
   text-transform: uppercase;
-  border: 1px solid transparent;
+  letter-spacing: 0.5px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #f4f4f5;
+  border: 1px solid rgba(255, 255, 255, 0.16);
 }
 
 .status-saved {
-  background: #edf0f4;
-  color: #505f72;
-  border-color: #d2d8e0;
+  background: rgba(255, 255, 255, 0.05);
+  color: #a1a1aa;
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
 .status-applied {
-  background: #e7f0ff;
-  color: #305fba;
-  border-color: #b8cff8;
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.25);
 }
 
 .status-interview {
-  background: #fff2df;
-  color: #b1671a;
-  border-color: #f5d0a0;
+  background: rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.35);
 }
 
 .status-rejected {
-  background: #ffe8ee;
-  color: #a83a58;
-  border-color: #f2bfd0;
+  background: rgba(255, 255, 255, 0.04);
+  color: #71717a;
+  border-color: rgba(255, 255, 255, 0.08);
 }
 
 .app-footer {
-  margin-top: 0.8rem;
+  margin-top: 1.25rem;
 }
 
 .app-actions,
 .status-editor {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.6rem;
+  gap: 0.75rem;
 }
 
 .btn-edit-status,
 .btn-open-job,
 .status-editor button {
-  padding: 0.68rem 0.95rem;
+  padding: 0.65rem 1.25rem;
   border-radius: 12px;
-  color: #fff;
   font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
 }
 
 .btn-edit-status {
-  background: linear-gradient(120deg, #4d6bff, #5f54de);
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.btn-edit-status:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-1px);
 }
 
 .btn-open-job {
-  background: linear-gradient(120deg, #17b890, #08a579);
+  background: #ffffff;
+  color: #09090b;
+  border: none;
+  font-weight: 700;
+  box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
 }
 
-.status-editor button:first-of-type {
-  background: linear-gradient(120deg, #4d6bff, #5f54de);
-}
-
-.status-editor button:last-of-type {
-  background: #8a93a9;
+.btn-open-job:hover {
+  background: #f4f4f5;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(255, 255, 255, 0.3);
 }
 
 .empty-state {
   border-radius: 18px;
-  padding: 1.4rem;
+  padding: 2.5rem;
   text-align: center;
-  color: #5c688e;
-  background: rgba(255, 255, 255, 0.7);
+  color: #a1a1aa;
+  background: rgba(18, 18, 22, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
+
+/* =========================================================
+   CANDIDATE CELEBRATION OFFER BANNER & RECRUITER CHAT
+   ========================================================= */
+
+.candidate-offer-banner {
+  margin: 1.25rem 0 0.5rem 0;
+  padding: 1.25rem 1.5rem;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.12) 0%, rgba(16, 185, 129, 0.12) 100%);
+  border: 1.5px solid rgba(245, 158, 11, 0.4);
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  animation: fadeIn 0.3s ease;
+  box-shadow: 0 4px 20px rgba(245, 158, 11, 0.1);
+}
+
+.candidate-offer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.candidate-offer-tag {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #fbbf24;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+}
+
+.candidate-offer-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0.2rem 0 0 0;
+}
+
+.candidate-offer-details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.75rem;
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 10px;
+  padding: 0.9rem 1.1rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.candidate-offer-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.candidate-offer-label {
+  font-size: 0.7rem;
+  color: #a1a1aa;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.candidate-offer-value {
+  font-size: 0.92rem;
+  color: #f4f4f5;
+  font-weight: 600;
+}
+
+.candidate-offer-value.highlight {
+  color: #34d399;
+  font-weight: 800;
+}
+
+.btn-download-offer-candidate {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1.35rem;
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 0.9rem;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.35);
+  align-self: flex-start;
+}
+
+.btn-download-offer-candidate:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(245, 158, 11, 0.55);
+}
+
+.btn-chat-recruiter {
+  background: rgba(37, 99, 235, 0.2);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.4);
+  padding: 0.65rem 1.25rem;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.btn-chat-recruiter:hover {
+  background: #2563eb;
+  color: #ffffff;
+  border-color: #2563eb;
+  transform: translateY(-1px);
+}
+
+.btn-chat-recruiter.has-messages {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+  border-color: rgba(52, 211, 153, 0.5);
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.25);
+}
+
+.btn-chat-recruiter.has-messages:hover {
+  background: #10b981;
+  color: #ffffff;
+  border-color: #10b981;
+}
+
+.chat-badge-count {
+  background: #3b82f6;
+  color: #ffffff;
+  font-size: 0.72rem;
+  padding: 0.12rem 0.5rem;
+  border-radius: 999px;
+  font-weight: 800;
+  margin-left: 0.4rem;
+}
+
+.btn-chat-recruiter.has-messages .chat-badge-count {
+  background: #059669;
+}
+
+

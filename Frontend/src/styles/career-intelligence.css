@@ -1,0 +1,255 @@
+/* =========================================================
+   EXECUTIVE CORPORATE BLUE & WHITE AI CAREER INTELLIGENCE
+   ========================================================= */
+
+.career-intelligence-hub {
+  padding: 0.5rem 0 3rem;
+  color: var(--text-body);
+  font-family: "Plus Jakarta Sans", sans-serif;
+}
+
+/* Hub Navigation Sub-Tabs */
+.ci-subnav {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  overflow-x: auto;
+  padding: 0.4rem;
+  background: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  box-shadow: var(--shadow-sm);
+}
+
+.ci-subnav-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.15rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.ci-subnav-btn:hover {
+  color: var(--navy-dark);
+  background: #f1f5f9;
+}
+
+.ci-subnav-btn.active {
+  color: #ffffff !important;
+  background: var(--blue-primary) !important;
+  border-color: var(--blue-primary) !important;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
+}
+
+/* Section Cards - Clean Corporate White */
+.ci-card {
+  background: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: var(--shadow-card);
+  margin-bottom: 2rem;
+  position: relative;
+  overflow: hidden;
+  color: var(--text-body);
+}
+
+.ci-header {
+  margin-bottom: 1.75rem;
+}
+
+.ci-header h2 {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--navy-dark);
+  margin-bottom: 0.35rem;
+}
+
+.ci-header p {
+  color: var(--text-muted);
+  font-size: 0.92rem;
+  margin: 0;
+}
+
+/* Upload Dropzone */
+.ci-upload-zone {
+  border: 2px dashed var(--blue-soft-border);
+  border-radius: 14px;
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+  background: var(--blue-ice);
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.ci-upload-zone:hover {
+  border-color: var(--blue-primary);
+  background: #e0f2fe;
+}
+
+.ci-upload-icon {
+  font-size: 2.25rem;
+  color: var(--blue-primary);
+  margin-bottom: 0.75rem;
+}
+
+.ci-upload-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--navy-dark);
+  margin-bottom: 0.25rem;
+}
+
+.ci-upload-hint {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+/* Buttons */
+.ci-btn-primary {
+  background: var(--blue-primary);
+  color: #ffffff;
+  border: 1px solid var(--blue-primary);
+  padding: 0.75rem 1.4rem;
+  font-weight: 600;
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2);
+  transition: all 0.2s ease;
+}
+
+.ci-btn-primary:hover {
+  background: var(--blue-hover);
+}
+
+.ci-btn-secondary {
+  background: var(--blue-light);
+  color: var(--blue-primary);
+  border: 1px solid var(--blue-soft-border);
+  padding: 0.75rem 1.4rem;
+  font-weight: 600;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.ci-btn-secondary:hover {
+  background: #dbeafe;
+}
+
+/* ATS Gauge */
+.ci-ats-circle {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.25rem;
+  box-shadow: 0 4px 15px rgba(37, 99, 235, 0.15);
+  background: #ffffff;
+  position: relative;
+}
+
+.ci-ats-inner {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 1px 4px rgba(15, 23, 42, 0.08);
+}
+
+.ci-ats-score {
+  font-size: 2rem;
+  font-weight: 900;
+  line-height: 1;
+  color: var(--navy-dark);
+}
+
+.ci-ats-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+/* Grid Box Results */
+.ci-results-box {
+  background: #f8fafc;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+/* Roadmap Milestones */
+.roadmap-timeline {
+  display: grid;
+  gap: 1.25rem;
+  margin-top: 1.5rem;
+}
+
+.roadmap-node {
+  background: #f8fafc;
+  border: 1px solid var(--border-color);
+  border-left: 4px solid var(--blue-primary);
+  border-radius: 10px;
+  padding: 1.25rem 1.5rem;
+  transition: all 0.2s ease;
+}
+
+.roadmap-node:hover {
+  background: #ffffff;
+  border-color: var(--blue-soft-border);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
+}
+
+.roadmap-node-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--navy-dark);
+  margin-bottom: 0.35rem;
+}
+
+.roadmap-node-desc {
+  font-size: 0.88rem;
+  color: var(--text-body);
+  margin: 0;
+}
+
+/* Q&A Cards */
+.qna-card {
+  background: #f8fafc;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.qna-question {
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: var(--navy-dark);
+  margin-bottom: 0.4rem;
+}
+
+.qna-answer {
+  font-size: 0.88rem;
+  color: var(--text-body);
+  margin: 0;
+}

@@ -1,14 +1,17 @@
 package com.example.backend.controller;
 
+import com.example.backend.dto.JobsResponseDto;
+import com.example.backend.dto.JobsResponseDto.PlatformInfoDto;
+import com.example.backend.dto.SearchDiagnosticDto;
+import com.example.backend.dto.SearchResponseDto;
 import com.example.backend.model.Job;
 import com.example.backend.model.Platform;
 import com.example.backend.service.JobService;
 import com.example.backend.service.PlatformLinkGenerator;
-import com.example.backend.dto.JobsResponseDto;
-import com.example.backend.dto.JobsResponseDto.PlatformInfoDto;
+import com.example.backend.service.SearchService;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,29 +24,60 @@ import java.util.stream.Collectors;
 public class JobController {
 
     private final JobService jobService;
+    private final SearchService searchService;
     private final PlatformLinkGenerator platformLinkGenerator;
 
-    public JobController(JobService jobService, PlatformLinkGenerator platformLinkGenerator) {
+    public JobController(JobService jobService, SearchService searchService, PlatformLinkGenerator platformLinkGenerator) {
         this.jobService = jobService;
+        this.searchService = searchService;
         this.platformLinkGenerator = platformLinkGenerator;
     }
 
     /**
      * Get all jobs with pagination support
-     * @param pageable pagination parameters (page, size, sort)
-     * @return paginated list of all jobs
      */
+    @GetMapping({"", "/"})
+    public ResponseEntity<Page<Job>> getAllJobsAlias(Pageable pageable) {
+        return ResponseEntity.ok(jobService.getAllJobs(pageable));
+    }
+
     @GetMapping("/all")
     public ResponseEntity<Page<Job>> getAllJobs(Pageable pageable) {
         return ResponseEntity.ok(jobService.getAllJobs(pageable));
     }
 
     /**
+     * Multi-source Search Engine endpoint
+     * Executes parallel real API calls + verified database search + dynamic 18+ platform discovery links
+     */
+    @GetMapping("/search")
+    public ResponseEntity<SearchResponseDto> searchJobs(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String location,
+            @RequestParam(required = false) String source,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "500") int size
+    ) {
+        SearchResponseDto response = searchService.executeSearch(keyword, location, source, page, size);
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * Search Diagnostic & Audit Engine endpoint
+     * Returns detailed breakdown of raw counts, location filtering, relevance filtering, and source metrics
+     */
+    @GetMapping({"/search/diagnostic", "/search/debug"})
+    public ResponseEntity<SearchDiagnosticDto> searchDiagnostic(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String location,
+            @RequestParam(required = false) String source
+    ) {
+        SearchDiagnosticDto diagnostic = searchService.executeDiagnosticSearch(keyword, location, source);
+        return ResponseEntity.ok(diagnostic);
+    }
+
+    /**
      * Get all jobs WITH platform discovery links
-     * Returns: jobs (from APIs) + platform search links (for non-API platforms)
-     * @param keyword optional search keyword
-     * @param location optional location filter
-     * @return jobs and platform links for all platforms
      */
     @GetMapping("/discovery")
     public ResponseEntity<JobsResponseDto> getJobsWithPlatforms(
@@ -51,28 +85,23 @@ public class JobController {
             @RequestParam(required = false) String location
     ) {
         try {
-            // Get jobs (default pagination)
-            Page<Job> jobsPage = jobService.getAllJobs(PageRequest.of(0, 50));
+            Page<Job> jobsPage = jobService.getAllJobs(PageRequest.of(0, 1000));
             List<?> jobs = jobsPage.getContent();
 
-            // Generate platform links for non-API platforms
             Map<String, String> platformLinks = platformLinkGenerator.generatePlatformLinks(
                     keyword != null ? keyword : "jobs",
                     location != null ? location : ""
             );
 
-            // Get platform information for platform cards
             List<PlatformInfoDto> platformInfo = Arrays.stream(Platform.values())
                     .map(p -> new PlatformInfoDto(p.getDisplayName(), p.getDescription(), p.getBaseUrl(), p.isApiPlatform()))
                     .collect(Collectors.toList());
 
-            // Extract sources
             Set<String> sources = ((List<Job>) jobs).stream()
                     .map(Job::getSource)
                     .filter(Objects::nonNull)
                     .collect(Collectors.toSet());
 
-            // Build response
             JobsResponseDto response = new JobsResponseDto(
                     jobs,
                     platformLinks,
@@ -89,28 +118,7 @@ public class JobController {
     }
 
     /**
-     * Advanced search with keyword, location, and source filtering
-     * Flexible filtering: supports any combination of parameters
-     * @param keyword job title or description keywords
-     * @param location job location
-     * @param source job source/platform (LinkedIn, Indeed, etc.)
-     * @param pageable pagination parameters
-     * @return paginated search results
-     */
-    @GetMapping("/search")
-    public ResponseEntity<Page<Job>> searchJobs(
-            @RequestParam(required = false) String keyword,
-            @RequestParam(required = false) String location,
-            @RequestParam(required = false) String source,
-            Pageable pageable
-    ) {
-        return ResponseEntity.ok(jobService.searchJobs(keyword, location, source, pageable));
-    }
-
-    /**
-     * Create a new job (admin/system use)
-     * @param job job details to create
-     * @return created job with ID
+     * Create a new job
      */
     @PostMapping("/create")
     public ResponseEntity<Job> createJob(@RequestBody Job job) {
@@ -118,10 +126,7 @@ public class JobController {
     }
 
     /**
-     * Get jobs by specific source/platform with pagination
-     * @param platform source name (LinkedIn, Indeed, Naukri, etc.)
-     * @param pageable pagination parameters
-     * @return paginated jobs from specified platform
+     * Get jobs by specific source/platform
      */
     @GetMapping("/source/{platform}")
     public ResponseEntity<Page<Job>> jobsBySource(
@@ -132,11 +137,32 @@ public class JobController {
     }
 
     /**
+     * Get real internships with pagination and filtering
+     */
+    @GetMapping("/internships")
+    public ResponseEntity<Page<Job>> getInternships(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String location,
+            Pageable pageable
+    ) {
+        return ResponseEntity.ok(jobService.getInternships(keyword, location, pageable));
+    }
+
+    /**
+     * Sync real-time internship feeds
+     */
+    @PostMapping("/sync-internships")
+    public ResponseEntity<Map<String, Object>> syncInternships() {
+        int added = jobService.syncLiveInternships();
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", "success");
+        response.put("message", "Live internships synchronized successfully.");
+        response.put("newInternshipsAdded", added);
+        return ResponseEntity.ok(response);
+    }
+
+    /**
      * Aggregate jobs from all sources
-     * Fetches jobs from multiple platforms and stores deduplicated results
-     * @param keyword optional search keyword for aggregation
-     * @param location optional location filter for aggregation
-     * @return aggregation summary with counts
      */
     @PostMapping("/aggregate")
     public ResponseEntity<String> aggregateJobs(
@@ -145,5 +171,22 @@ public class JobController {
     ) {
         int added = jobService.aggregateAndStoreJobs(keyword, location);
         return ResponseEntity.ok("Aggregation completed. New jobs added: " + added);
+    }
+
+    /**
+     * Trigger instant live synchronization from all external API feeds
+     */
+    @PostMapping("/sync")
+    public ResponseEntity<Map<String, Object>> syncLiveJobs(
+            @RequestParam(required = false, defaultValue = "") String keyword,
+            @RequestParam(required = false, defaultValue = "") String location
+    ) {
+        JobService.AggregationResult result = jobService.aggregateAndStoreJobsWithStats(keyword, location);
+        Map<String, Object> resp = new HashMap<>();
+        resp.put("status", "SUCCESS");
+        resp.put("fetchedCount", result.getFetchedCount());
+        resp.put("newJobsAdded", result.getNewJobsAdded());
+        resp.put("totalJobsStored", result.getTotalJobsStored());
+        return ResponseEntity.ok(resp);
     }
 }

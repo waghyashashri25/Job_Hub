@@ -1,75 +1,184 @@
+/* =========================================================
+   EXECUTIVE CORPORATE NAVBAR (Deep Navy & Royal Blue)
+   ========================================================= */
+
 .navbar {
   position: sticky;
   top: 0;
-  z-index: 50;
-  padding: 1rem 0;
-  font-size: 16px;
+  z-index: 100;
+  background: #0f172a;
+  border-bottom: 1px solid #1e293b;
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.15);
 }
 
 .navbar-inner {
-  width: min(1200px, 94vw);
+  width: min(1320px, 94vw);
   margin: 0 auto;
-  border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.55);
-  background: rgba(255, 255, 255, 0.68);
-  backdrop-filter: blur(10px);
-  box-shadow: 0 16px 38px rgba(36, 55, 141, 0.16);
-  padding: 0.78rem 0.95rem;
+  padding: 0.75rem 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 1rem;
+  gap: 1.5rem;
 }
 
 .navbar-brand {
-  font-family: "Space Grotesk", sans-serif;
-  font-size: 18px;
-  font-weight: 700;
-  color: #3343a8;
-  letter-spacing: -0.02em;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  text-decoration: none;
+  transition: opacity 0.2s ease;
 }
 
-.navbar-menu {
+.navbar-brand:hover {
+  opacity: 0.92;
+}
+
+.navbar-logo-img {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  flex-shrink: 0;
+}
+
+.navbar-brand-text-block {
   display: flex;
-  gap: 0.6rem;
+  flex-direction: column;
+}
+
+.navbar-brand-title {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+
+.navbar-brand-badge {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #94a3b8;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-top: 1px;
+}
+
+.navbar-right {
+  display: flex;
+  gap: 0.35rem;
   align-items: center;
   flex-wrap: wrap;
 }
 
 .nav-link {
-  padding: 0.65rem 1rem;
-  border-radius: 12px;
+  padding: 0.45rem 0.8rem;
+  border-radius: 8px;
   font-weight: 600;
-  font-size: 15px;
-  color: #4f5a85;
-  transition:
-    transform 0.2s ease,
-    background-color 0.2s ease,
-    color 0.2s ease;
+  font-size: 0.86rem;
+  color: #cbd5e1;
+  background: transparent;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: all 0.2s ease;
 }
 
-.nav-link:hover,
+.nav-link:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
 .nav-link.active {
-  color: #fff;
-  background: linear-gradient(120deg, #4a63ff, #7348ff);
-}
-
-.btn-logout {
-  padding: 0.54rem 0.92rem;
-  border-radius: 12px;
-  color: #fff;
-  background: linear-gradient(120deg, #e1527a, #d14a5f);
+  color: #ffffff !important;
+  background: #2563eb !important;
   font-weight: 700;
+  box-shadow: 0 2px 10px rgba(37, 99, 235, 0.35);
 }
 
-@media (max-width: 768px) {
+/* User Avatar Circle */
+.btn-profile-nav {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #2563eb;
+  color: #ffffff;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  padding: 0;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+}
+
+.btn-profile-nav:hover {
+  border-color: #ffffff;
+  transform: scale(1.05);
+  box-shadow: 0 0 12px rgba(37, 99, 235, 0.5);
+}
+
+.nav-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@media (max-width: 860px) {
   .navbar-inner {
-    width: min(1200px, 92vw);
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .navbar-menu {
-    justify-content: space-between;
+    padding: 0.75rem 1rem;
   }
 }
+
+/* Global Platform Announcement Bar */
+.global-announcement-bar {
+  background: linear-gradient(90deg, #1e3a8a, #2563eb);
+  color: #ffffff;
+  padding: 0.55rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  font-weight: 500;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  animation: slideDown 0.3s ease;
+  z-index: 101;
+  position: relative;
+}
+
+.announcement-content {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0 auto;
+}
+
+.announcement-badge {
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.announcement-close-btn {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0 0.5rem;
+  transition: color 0.15s ease;
+}
+
+.announcement-close-btn:hover {
+  color: #ffffff;
+}
+

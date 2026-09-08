@@ -14,6 +14,7 @@ import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
 import ApplicationTracker from "./pages/ApplicationTracker";
 import AdminPanel from "./pages/AdminPanel";
+import RecruiterPortal from "./pages/RecruiterPortal";
 import OAuthCallback from "./pages/OAuthCallback";
 
 import "./styles/global.css";
@@ -42,7 +43,7 @@ function App() {
               element={
                 <ProtectedRoute
                   element={<Dashboard />}
-                  allowedRoles={["USER", "ADMIN"]}
+                  allowedRoles={["USER", "ADMIN", "RECRUITER"]}
                 />
               }
             />
@@ -51,7 +52,16 @@ function App() {
               element={
                 <ProtectedRoute
                   element={<ApplicationTracker />}
-                  allowedRoles={["USER", "ADMIN"]}
+                  allowedRoles={["USER", "ADMIN", "RECRUITER"]}
+                />
+              }
+            />
+            <Route
+              path="/recruiter"
+              element={
+                <ProtectedRoute
+                  element={<RecruiterPortal />}
+                  allowedRoles={["RECRUITER", "ADMIN"]}
                 />
               }
             />

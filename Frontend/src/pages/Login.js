@@ -2,160 +2,378 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { authService } from "../services/apiService";
 import { saveAuthState } from "../utils/auth";
+import OtpModal from "../components/OtpModal";
+import ForgotPasswordModal from "../components/ForgotPasswordModal";
+import PopupModal from "../components/PopupModal";
 import "../styles/auth.css";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [socialLoading, setSocialLoading] = useState("");
+
+  // Login OTP state
+  const [isOtpOpen, setIsOtpOpen] = useState(false);
+  const [otpLoading, setOtpLoading] = useState(false);
+  const [otpError, setOtpError] = useState("");
+  const [otpDestination, setOtpDestination] = useState("");
+
+  // Forgot password modal state
+  const [isForgotOpen, setIsForgotOpen] = useState(false);
+
+  // Popup Modal state
+  const [popup, setPopup] = useState({
+    isOpen: false,
+    title: "",
+    message: "",
+    type: "info",
+    primaryBtnText: "OK",
+    onPrimary: null,
+    secondaryBtnText: null,
+    onSecondary: null,
+  });
+
   const navigate = useNavigate();
 
+  // Login Step 1: Initial check & trigger real OTP
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setLoading(true);
 
     try {
-      const response = await authService.login(email, password);
-      const token =
-        typeof response.data === "string"
-          ? response.data
-          : response.data?.token;
+      const res = await authService.loginInit(email, password);
 
-      console.debug(
-        "[Login] response token received:",
-        token ? "present" : "missing",
-      );
-
-      if (!token) {
-        throw new Error("Login response did not include a token");
+      if (res.data?.otpRequired) {
+        setOtpDestination(res.data.email || email);
+        setOtpError("");
+        setIsOtpOpen(true);
+      } else {
+        // Fallback for direct token
+        const token = typeof res.data === "string" ? res.data : res.data?.token;
+        if (token) {
+          saveAuthState(token);
+          navigate("/jobs");
+        }
       }
-
-      saveAuthState(token);
-      console.debug(
-        "[Login] token stored in localStorage:",
-        localStorage.getItem("token") ? "present" : "missing",
-      );
-      navigate("/jobs");
     } catch (err) {
-      setError(err.message || "Login failed. Please try again.");
+      const errorMsg =
+        err.response?.data?.error ||
+        err.response?.data?.message ||
+        "Invalid email or password. Please check your credentials.";
+
+      // Display prompt popup
+      setPopup({
+        isOpen: true,
+        title: "Invalid Credentials",
+        message: typeof errorMsg === "string" ? errorMsg : "The username or password you entered is incorrect. Please try again or use Forgot Password.",
+        type: "error",
+        primaryBtnText: "Try Again",
+        onPrimary: () => setPopup((prev) => ({ ...prev, isOpen: false })),
+        secondaryBtnText: "Forgot Password?",
+        onSecondary: () => {
+          setPopup((prev) => ({ ...prev, isOpen: false }));
+          setIsForgotOpen(true);
+        },
+      });
+
+      setError(typeof errorMsg === "string" ? errorMsg : "Invalid credentials.");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleGoogleSignIn = (e) => {
-    e.preventDefault();
-    console.debug("[Login] Google Sign-In clicked");
-    // Redirect to backend OAuth endpoint or Google OAuth
-    const googleAuthUrl = `${process.env.REACT_APP_API_URL || "http://localhost:8080/api"}/oauth/google`;
-    window.location.href = googleAuthUrl;
+  // Login Step 2: Verify OTP and save auth token
+  const handleVerifyLoginOtp = async (otpCode) => {
+    setOtpLoading(true);
+    setOtpError("");
+
+    try {
+      const res = await authService.loginVerify(email, otpCode);
+      const token = res.data?.token;
+
+      if (!token) {
+        throw new Error("Invalid response from server.");
+      }
+
+      saveAuthState(token);
+      setIsOtpOpen(false);
+
+      setPopup({
+        isOpen: true,
+        title: "Welcome Back to JobHub!",
+        message: "Sign-in verified successfully. A confirmation email has been dispatched to your inbox.",
+        type: "success",
+        primaryBtnText: "Go to Dashboard",
+        onPrimary: () => {
+          setPopup((prev) => ({ ...prev, isOpen: false }));
+          navigate("/jobs");
+        },
+      });
+
+      setTimeout(() => navigate("/jobs"), 1200);
+    } catch (err) {
+      setOtpError(
+        err.response?.data?.error ||
+        err.response?.data?.message ||
+        "Invalid or expired verification code. Please try again."
+      );
+    } finally {
+      setOtpLoading(false);
+    }
   };
 
-  const handleGithubSignIn = (e) => {
-    e.preventDefault();
-    console.debug("[Login] GitHub Sign-In clicked");
-    // Redirect to backend OAuth endpoint or GitHub OAuth
-    const githubAuthUrl = `${process.env.REACT_APP_API_URL || "http://localhost:8080/api"}/oauth/github`;
-    window.location.href = githubAuthUrl;
+  const handleResendLoginOtp = async () => {
+    try {
+      await authService.loginInit(email, password);
+      setOtpError("");
+    } catch (err) {
+      setOtpError("Failed to resend code. Please try again.");
+    }
+  };
+
+  const handleOAuthLogin = (provider) => {
+    setError("");
+    setSocialLoading(provider);
+    const apiUrl = process.env.REACT_APP_API_URL || "http://localhost:8080/api";
+    window.location.href = `${apiUrl}/oauth/${provider.toLowerCase()}`;
   };
 
   return (
     <div className="auth-page">
+      {/* Alert Popups */}
+      <PopupModal
+        isOpen={popup.isOpen}
+        title={popup.title}
+        message={popup.message}
+        type={popup.type}
+        primaryBtnText={popup.primaryBtnText}
+        onPrimary={popup.onPrimary}
+        secondaryBtnText={popup.secondaryBtnText}
+        onSecondary={popup.onSecondary}
+        onClose={() => setPopup((prev) => ({ ...prev, isOpen: false }))}
+      />
+
+      {/* Login OTP Modal */}
+      <OtpModal
+        isOpen={isOtpOpen}
+        title="Sign-In Security Verification"
+        subtitle={
+          <>
+            A real 6-digit verification code has been sent to <strong>{otpDestination}</strong>.
+          </>
+        }
+        destination={otpDestination}
+        onVerify={handleVerifyLoginOtp}
+        onResend={handleResendLoginOtp}
+        onClose={() => setIsOtpOpen(false)}
+        loading={otpLoading}
+        error={otpError}
+      />
+
+      {/* Forgot Password Modal */}
+      <ForgotPasswordModal
+        isOpen={isForgotOpen}
+        onClose={() => setIsForgotOpen(false)}
+        onSuccess={() => {
+          setIsForgotOpen(false);
+          setPopup({
+            isOpen: true,
+            title: "Password Updated",
+            message: "Your password was successfully updated. You can now sign in with your new password.",
+            type: "success",
+            primaryBtnText: "OK",
+            onPrimary: () => setPopup((prev) => ({ ...prev, isOpen: false })),
+          });
+        }}
+      />
+
       <div className="auth-card">
-        <p className="auth-kicker">Welcome back</p>
-        <h1>Sign in to JobHub</h1>
-        <p className="auth-subtitle">
-          Track opportunities and manage your applications.
-        </p>
+        {/* Brand Header */}
+        <Link to="/" className="auth-brand-header">
+          <img
+            src="/logo.png"
+            alt="JobHub Logo"
+            className="auth-brand-logo"
+          />
+          <div className="auth-brand-info">
+            <span className="auth-brand-title">JobHub</span>
+            <span className="auth-brand-badge">AI Powered Job Hunt Platform</span>
+          </div>
+        </Link>
 
-        {error && <div className="ui-alert error">{error}</div>}
+        <div>
+          <span className="auth-kicker">Welcome back</span>
+          <h1>Sign in to JobHub</h1>
+          <p className="auth-subtitle">
+            Track opportunities, generate matches & manage applications.
+          </p>
+        </div>
 
+        {error && (
+          <div className="ui-alert error">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="8" x2="12" y2="12" />
+              <line x1="12" y1="16" x2="12.01" y2="16" />
+            </svg>
+            <span>{error}</span>
+          </div>
+        )}
+
+        {/* Credentials Form */}
         <form className="auth-form" onSubmit={handleSubmit}>
-          <label htmlFor="login-email">Email</label>
-          <input
-            id="login-email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="you@example.com"
-            required
-          />
+          <div className="auth-input-group">
+            <label htmlFor="login-email">Email address</label>
+            <div className="auth-input-wrapper">
+              <div className="auth-input-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                  <polyline points="22,6 12,13 2,6" />
+                </svg>
+              </div>
+              <input
+                id="login-email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@example.com"
+                required
+                autoComplete="email"
+              />
+            </div>
+          </div>
 
-          <label htmlFor="login-password">Password</label>
-          <input
-            id="login-password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Enter your password"
-            required
-          />
+          <div className="auth-input-group">
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.4rem" }}>
+              <label htmlFor="login-password" style={{ margin: 0 }}>Password</label>
+              <button
+                type="button"
+                className="btn-link-secondary"
+                onClick={() => {
+                  setError("");
+                  setIsForgotOpen(true);
+                }}
+                style={{ fontSize: "0.8rem", color: "#2563eb", fontWeight: "600" }}
+              >
+                Forgot password?
+              </button>
+            </div>
+            <div className="auth-input-wrapper">
+              <div className="auth-input-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                </svg>
+              </div>
+              <input
+                id="login-password"
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter your password"
+                required
+                autoComplete="current-password"
+              />
+              <button
+                type="button"
+                className="password-toggle-btn"
+                onClick={() => setShowPassword(!showPassword)}
+                title={showPassword ? "Hide password" : "Show password"}
+                tabIndex={-1}
+              >
+                {showPassword ? (
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
+                    <line x1="1" y1="1" x2="23" y2="23" />
+                  </svg>
+                ) : (
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                    <circle cx="12" cy="12" r="3" />
+                  </svg>
+                )}
+              </button>
+            </div>
+          </div>
 
-          <button type="submit" className="btn-auth" disabled={loading}>
-            {loading ? "Signing in..." : "Login"}
+          <button type="submit" className="btn-auth" disabled={loading || !!socialLoading}>
+            {loading ? (
+              <>
+                <div className="spinner" />
+                <span>Checking credentials...</span>
+              </>
+            ) : (
+              "Sign in"
+            )}
           </button>
         </form>
 
+        {/* Divider */}
         <div className="auth-divider">
-          <span>or</span>
+          <span>or continue with</span>
         </div>
 
-        <button
-          type="button"
-          className="btn-google"
-          onClick={handleGoogleSignIn}
-        >
-          <svg
-            width="18"
-            height="18"
-            viewBox="0 0 18 18"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
+        {/* Social Logins */}
+        <div className="auth-social-stack">
+          <button
+            type="button"
+            className="btn-google"
+            onClick={() => handleOAuthLogin("GOOGLE")}
+            disabled={loading || !!socialLoading}
           >
-            <path
-              d="M17.6 9.2c0-.8-.1-1.6-.4-2.3H9v4.3h4.8c-.2 1.3-.9 2.4-2 3.1v2.5h3.2c1.9-1.7 3-4.3 3-7.6z"
-              fill="#4285F4"
-            />
-            <path
-              d="M9 18c2.4 0 4.4-.8 5.9-2.2l-3.2-2.5c-.9.6-2 1-3.7 1-2.8 0-5.2-1.9-6-4.5H2.6v2.6C3.9 16.6 6.3 18 9 18z"
-              fill="#34A853"
-            />
-            <path
-              d="M3 12.8c-.2-.6-.3-1.3-.3-2s.1-1.4.3-2V6.2H2.6C1.9 7.6 1.6 9 1.6 9s0 1.4.4 2.8l2-1.5z"
-              fill="#FBBC05"
-            />
-            <path
-              d="M9 3.5c1.6 0 3 .5 4.1 1.6l3.1-3.1C13.4.9 11.4 0 9 0 6.3 0 3.9 1.4 2.6 3.5L3 6c.8-2.6 3.2-4.5 6-4.5z"
-              fill="#EA4335"
-            />
-          </svg>
-          Sign in with Google
-        </button>
+            {socialLoading === "GOOGLE" ? (
+              <div className="spinner" style={{ borderColor: "rgba(37,99,235,0.3)", borderTopColor: "#2563eb" }} />
+            ) : (
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <path
+                  d="M17.64 9.204c0-.638-.057-1.252-.164-1.841H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"
+                  fill="#4285F4"
+                />
+                <path
+                  d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"
+                  fill="#34A853"
+                />
+                <path
+                  d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z"
+                  fill="#FBBC05"
+                />
+                <path
+                  d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z"
+                  fill="#EA4335"
+                />
+              </svg>
+            )}
+            <span>Continue with Google</span>
+          </button>
 
-        <button
-          type="button"
-          className="btn-github"
-          onClick={handleGithubSignIn}
-        >
-          <svg
-            width="18"
-            height="18"
-            viewBox="0 0 18 18"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
+          <button
+            type="button"
+            className="btn-github"
+            onClick={() => handleOAuthLogin("GITHUB")}
+            disabled={loading || !!socialLoading}
           >
-            <path
-              d="M9 0C4.03 0 0 4.13 0 9.23c0 4.08 2.58 7.55 6.15 8.77.45.08.62-.2.62-.44v-1.53c-2.5.55-3.03-1.21-3.03-1.21-.41-1.04-1-1.31-1-1.31-.82-.56.06-.55.06-.55.9.06 1.38.93 1.38.93.8 1.38 2.1.98 2.61.75.08-.58.32-1 .58-1.21-2.01-.23-4.13-1.01-4.13-4.48 0-.99.35-1.8.92-2.43-.09-.23-.4-1.17.09-2.43 0 0 .75-.24 2.46.93.71-.2 1.48-.3 2.23-.3s1.52.1 2.23.3c1.7-1.17 2.45-.93 2.45-.93.48 1.26.17 2.2.08 2.43.57.63.92 1.44.92 2.43 0 3.48-2.12 4.24-4.14 4.46.33.28.62.84.62 1.7v2.52c0 .24.16.52.62.44C15.4 16.78 18 13.31 18 9.23 18 4.13 13.97 0 9 0z"
-              fill="#1B1F23"
-            />
-          </svg>
-          Sign in with GitHub
-        </button>
+            {socialLoading === "GITHUB" ? (
+              <div className="spinner" />
+            ) : (
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  fillRule="evenodd"
+                  clipRule="evenodd"
+                  d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0 0 22 12.017C22 6.484 17.522 2 12 2z"
+                />
+              </svg>
+            )}
+            <span>Continue with GitHub</span>
+          </button>
+        </div>
 
+        {/* Sign up Link */}
         <p className="auth-link-text">
-          New here? <Link to="/signup">Create an account</Link>
+          New to JobHub? <Link to="/signup">Create an account</Link>
         </p>
       </div>
     </div>

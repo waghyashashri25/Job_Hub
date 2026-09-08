@@ -8,46 +8,37 @@ const InsightsTab = ({ jobs, savedJobIds, userSkills = [] }) => {
       return null;
     }
 
-    // Enrich all jobs with analysis using user skills
     const enrichedJobs = jobs.map((job) =>
-      enrichJobWithAnalysis(job, userSkills),
+      enrichJobWithAnalysis(job, userSkills)
     );
 
-    // Calculate statistics
-    const matchPercentages = enrichedJobs.map(
-      (j) => j.analysis.matchPercentage,
-    );
-    const interviewProbabilities = enrichedJobs.map(
-      (j) => j.analysis.interviewProbability,
-    );
+    const matchPercentages = enrichedJobs.map((j) => j.analysis.matchPercentage);
+    const interviewProbabilities = enrichedJobs.map((j) => j.analysis.interviewProbability);
 
     const avgMatch = Math.round(
-      matchPercentages.reduce((a, b) => a + b, 0) / matchPercentages.length,
+      matchPercentages.reduce((a, b) => a + b, 0) / matchPercentages.length
     );
     const avgInterview = Math.round(
       interviewProbabilities.reduce((a, b) => a + b, 0) /
-        interviewProbabilities.length,
+        interviewProbabilities.length
     );
 
     const matchDistribution = {
       high: enrichedJobs.filter((j) => j.analysis.matchPercentage >= 75).length,
       medium: enrichedJobs.filter(
-        (j) =>
-          j.analysis.matchPercentage >= 50 && j.analysis.matchPercentage < 75,
+        (j) => j.analysis.matchPercentage >= 50 && j.analysis.matchPercentage < 75
       ).length,
       low: enrichedJobs.filter((j) => j.analysis.matchPercentage < 50).length,
     };
 
-    // Top matching jobs
     const topMatches = enrichedJobs
       .sort((a, b) => b.analysis.matchPercentage - a.analysis.matchPercentage)
       .slice(0, 5);
 
-    // Best interview probability
     const bestOpportunities = enrichedJobs
       .sort(
         (a, b) =>
-          b.analysis.interviewProbability - a.analysis.interviewProbability,
+          b.analysis.interviewProbability - a.analysis.interviewProbability
       )
       .slice(0, 5);
 
@@ -65,9 +56,9 @@ const InsightsTab = ({ jobs, savedJobIds, userSkills = [] }) => {
     return (
       <div className="insights-tab">
         <div className="empty-state">
-          <p className="empty-icon">🧠</p>
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="1.5" style={{ marginBottom: "1rem" }}><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
           <h3>No Data Available</h3>
-          <p>Load jobs to see AI insights</p>
+          <p>Search and load jobs to inspect AI insights.</p>
         </div>
       </div>
     );
@@ -77,174 +68,69 @@ const InsightsTab = ({ jobs, savedJobIds, userSkills = [] }) => {
     <div className="insights-tab">
       {/* Header */}
       <div className="tab-header">
-        <h1>AI-Powered Insights</h1>
+        <h1>AI-Powered Opportunity Insights</h1>
         <p className="subtitle">
-          Intelligent job matching and opportunity analysis
+          Intelligent job matching and interview probability analysis across active listings
         </p>
       </div>
 
       {/* Summary Metrics */}
       <section className="insights-section">
-        <h2>📊 Your Matching Score</h2>
-        <div className="metrics-grid">
-          <div className="metric-card">
-            <p className="metric-label">Average Match %</p>
-            <p className="metric-value large">{insights.avgMatch}%</p>
-            <p className="metric-description">
-              Across {insights.totalJobs} jobs
-            </p>
+        <h2 style={{ fontSize: "1.25rem", fontWeight: 800, color: "#0f172a", marginBottom: "1.25rem" }}>
+          Candidate Match Diagnostics
+        </h2>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "1.25rem" }}>
+          <div style={{ background: "#f8fafc", border: "1px solid #e2e8f0", padding: "1.5rem", borderRadius: "12px", textAlign: "center" }}>
+            <p style={{ color: "#64748b", fontSize: "0.82rem", textTransform: "uppercase", fontWeight: 700, margin: "0 0 0.25rem" }}>Average Match Percentage</p>
+            <p style={{ fontSize: "2.25rem", fontWeight: 900, color: "#2563eb", margin: 0 }}>{insights.avgMatch}%</p>
+            <p style={{ color: "#64748b", fontSize: "0.82rem", margin: "4px 0 0" }}>Across {insights.totalJobs} live jobs</p>
           </div>
 
-          <div className="metric-card">
-            <p className="metric-label">Average Interview Chance</p>
-            <p className="metric-value large">{insights.avgInterview}%</p>
-            <p className="metric-description">AI-calculated probability</p>
+          <div style={{ background: "#f8fafc", border: "1px solid #e2e8f0", padding: "1.5rem", borderRadius: "12px", textAlign: "center" }}>
+            <p style={{ color: "#64748b", fontSize: "0.82rem", textTransform: "uppercase", fontWeight: 700, margin: "0 0 0.25rem" }}>Average Interview Probability</p>
+            <p style={{ fontSize: "2.25rem", fontWeight: 900, color: "#0f172a", margin: 0 }}>{insights.avgInterview}%</p>
+            <p style={{ color: "#64748b", fontSize: "0.82rem", margin: "4px 0 0" }}>Skill alignment calculation</p>
           </div>
         </div>
       </section>
 
       {/* Match Distribution */}
       <section className="insights-section">
-        <h2>🎯 Match Distribution</h2>
-        <div className="distribution-bars">
-          <div className="distribution-item">
-            <div className="distribution-bar">
-              <div
-                className="distribution-fill high"
-                style={{
-                  width: `${(insights.matchDistribution.high / insights.totalJobs) * 100}%`,
-                }}
-              />
-            </div>
-            <p className="distribution-label">
-              <span className="badge high">High</span>
-              <span className="count">{insights.matchDistribution.high}</span>
-            </p>
+        <h2 style={{ fontSize: "1.25rem", fontWeight: 800, color: "#0f172a", marginBottom: "1.25rem" }}>
+          Match Tier Distribution
+        </h2>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "1rem" }}>
+          <div style={{ background: "#f0fdf4", border: "1px solid #bbf7d0", padding: "1.25rem", borderRadius: "10px", textAlign: "center" }}>
+            <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#166534", textTransform: "uppercase" }}>High Match (&gt;75%)</span>
+            <p style={{ fontSize: "1.75rem", fontWeight: 900, color: "#166534", margin: "0.25rem 0 0" }}>{insights.matchDistribution.high}</p>
           </div>
-
-          <div className="distribution-item">
-            <div className="distribution-bar">
-              <div
-                className="distribution-fill medium"
-                style={{
-                  width: `${(insights.matchDistribution.medium / insights.totalJobs) * 100}%`,
-                }}
-              />
-            </div>
-            <p className="distribution-label">
-              <span className="badge medium">Medium</span>
-              <span className="count">{insights.matchDistribution.medium}</span>
-            </p>
+          <div style={{ background: "#eff6ff", border: "1px solid #bfdbfe", padding: "1.25rem", borderRadius: "10px", textAlign: "center" }}>
+            <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#1d4ed8", textTransform: "uppercase" }}>Moderate Match (50-74%)</span>
+            <p style={{ fontSize: "1.75rem", fontWeight: 900, color: "#1d4ed8", margin: "0.25rem 0 0" }}>{insights.matchDistribution.medium}</p>
           </div>
-
-          <div className="distribution-item">
-            <div className="distribution-bar">
-              <div
-                className="distribution-fill low"
-                style={{
-                  width: `${(insights.matchDistribution.low / insights.totalJobs) * 100}%`,
-                }}
-              />
-            </div>
-            <p className="distribution-label">
-              <span className="badge low">Low</span>
-              <span className="count">{insights.matchDistribution.low}</span>
-            </p>
+          <div style={{ background: "#f8fafc", border: "1px solid #e2e8f0", padding: "1.25rem", borderRadius: "10px", textAlign: "center" }}>
+            <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase" }}>Growth Roles (&lt;50%)</span>
+            <p style={{ fontSize: "1.75rem", fontWeight: 900, color: "#64748b", margin: "0.25rem 0 0" }}>{insights.matchDistribution.low}</p>
           </div>
         </div>
       </section>
 
       {/* Top Matches */}
       <section className="insights-section">
-        <h2>🏆 Your Best Matches</h2>
-        <div className="top-matches-list">
+        <h2 style={{ fontSize: "1.25rem", fontWeight: 800, color: "#0f172a", marginBottom: "1.25rem" }}>
+          Highest Matching Roles for Your Skill Profile
+        </h2>
+        <div style={{ display: "grid", gap: "1rem" }}>
           {insights.topMatches.map((job, idx) => (
-            <div key={job.id} className="match-item">
-              <div className="match-rank">#{idx + 1}</div>
-              <div className="match-info">
-                <h4>{job.title}</h4>
-                <p className="match-company">{job.company}</p>
-                <p className="match-location">📍 {job.location}</p>
+            <div key={job.id ? `match-${job.id}` : `match-${idx}`} style={{ background: "#f8fafc", border: "1px solid #e2e8f0", padding: "1.25rem", borderRadius: "12px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <div>
+                <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#2563eb", textTransform: "uppercase" }}>Rank #{idx + 1}</span>
+                <h4 style={{ fontSize: "1.05rem", fontWeight: 700, color: "#0f172a", margin: "2px 0" }}>{job.title}</h4>
+                <p style={{ color: "#64748b", fontSize: "0.88rem", margin: 0 }}>{job.company} • {job.location}</p>
               </div>
-              <div className="match-score">
-                <p className="score-value">{job.analysis.matchPercentage}%</p>
-                <p className="score-label">Match</p>
-              </div>
-              <div
-                className="match-indicator"
-                style={{
-                  background: job.analysis.confidenceColor,
-                  opacity: 0.3,
-                }}
-              />
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Best Opportunities */}
-      <section className="insights-section">
-        <h2>⭐ Best Opportunities (By Interview Chance)</h2>
-        <div className="opportunities-list">
-          {insights.bestOpportunities.map((job, idx) => (
-            <div key={job.id} className="opportunity-item">
-              <div className="opp-header">
-                <div className="opp-info">
-                  <h4>{job.title}</h4>
-                  <p className="opp-company">{job.company}</p>
-                </div>
-                <div className="opp-scores">
-                  <div className="score-box">
-                    <span className="label">Match:</span>
-                    <span
-                      className="value"
-                      style={{ color: job.analysis.confidenceColor }}
-                    >
-                      {job.analysis.matchPercentage}%
-                    </span>
-                  </div>
-                  <div className="score-box">
-                    <span className="label">Interview:</span>
-                    <span
-                      className="value"
-                      style={{ color: job.analysis.confidenceColor }}
-                    >
-                      {job.analysis.interviewProbability}%
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="opp-skills">
-                {job.analysis.skillGap.matched.length > 0 && (
-                  <div className="skills-section">
-                    <p className="skills-label">
-                      Your Skills ({job.analysis.skillGap.matched.length}):
-                    </p>
-                    <div className="skill-tags">
-                      {job.analysis.skillGap.matched.slice(0, 4).map((s, i) => (
-                        <span key={i} className="skill-tag matched">
-                          ✓ {s}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {job.analysis.skillGap.missing.length > 0 && (
-                  <div className="skills-section">
-                    <p className="skills-label">
-                      Learn ({job.analysis.skillGap.missing.length}):
-                    </p>
-                    <div className="skill-tags">
-                      {job.analysis.skillGap.missing.slice(0, 4).map((s, i) => (
-                        <span key={i} className="skill-tag missing">
-                          {s}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )}
+              <div style={{ textAlign: "right" }}>
+                <span style={{ fontSize: "1.35rem", fontWeight: 800, color: "#2563eb" }}>{job.analysis.matchPercentage}%</span>
+                <span style={{ display: "block", fontSize: "0.72rem", color: "#64748b", textTransform: "uppercase" }}>Match</span>
               </div>
             </div>
           ))}
