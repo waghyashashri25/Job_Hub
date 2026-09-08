@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { getRole, getUserEmail } from "../utils/auth";
-import { adminService } from "../services/apiService";
+import { adminService, authService } from "../services/apiService";
 import "../styles/navbar.css";
 
 const Navbar = ({ onOpenProfile }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const userRole = getRole();
+  const [userRole, setUserRole] = useState(() => getRole());
   const userEmail = getUserEmail();
   const token =
     localStorage.getItem("token") || localStorage.getItem("jwtToken");
@@ -17,6 +17,29 @@ const Navbar = ({ onOpenProfile }) => {
   );
   const [announcement, setAnnouncement] = useState("");
   const [bannerDismissed, setBannerDismissed] = useState(false);
+
+  // Sync role with server and listen for role updates
+  useEffect(() => {
+    const handleRoleUpdate = () => {
+      setUserRole(getRole());
+    };
+    window.addEventListener("jobhub_role_updated", handleRoleUpdate);
+
+    if (token) {
+      authService
+        .getProfile()
+        .then((res) => {
+          if (res.data?.role) {
+            const freshRole = String(res.data.role).toUpperCase();
+            localStorage.setItem("userRole", freshRole);
+            setUserRole(freshRole);
+          }
+        })
+        .catch(() => {});
+    }
+
+    return () => window.removeEventListener("jobhub_role_updated", handleRoleUpdate);
+  }, [token]);
 
   // Fetch active site-wide announcement
   useEffect(() => {

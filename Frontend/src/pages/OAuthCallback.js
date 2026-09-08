@@ -21,13 +21,16 @@ const OAuthCallback = ({ provider = "Google" }) => {
         const error = searchParams.get("error");
         const name = searchParams.get("name");
         const email = searchParams.get("email");
+        const roleParam = searchParams.get("role");
 
         if (error) {
           throw new Error(decodeURIComponent(error));
         }
 
         if (token) {
-          saveAuthState(token);
+          const decodedRole = roleParam ? decodeURIComponent(roleParam).toUpperCase() : null;
+          saveAuthState(token, decodedRole);
+          window.dispatchEvent(new Event("jobhub_role_updated"));
           
           const decodedName = name ? decodeURIComponent(name) : "";
           const decodedEmail = email ? decodeURIComponent(email) : (getUserEmail() || "");

@@ -36,6 +36,9 @@ export const authService = {
 
   getOAuthStatus: () =>
     axiosInstance.get("/oauth/status"),
+
+  getProfile: () =>
+    axiosInstance.get("/users/profile"),
 };
 
 export const adminService = {

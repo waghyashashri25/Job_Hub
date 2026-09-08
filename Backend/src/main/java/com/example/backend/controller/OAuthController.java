@@ -268,9 +268,11 @@ public class OAuthController {
             String encodedName = URLEncoder.encode(user.getName(), StandardCharsets.UTF_8);
             String encodedEmail = URLEncoder.encode(user.getEmail(), StandardCharsets.UTF_8);
 
+            String encodedRole = URLEncoder.encode(user.getRole() != null ? user.getRole() : "USER", StandardCharsets.UTF_8);
+
             logger.info("Google OAuth successful for: {}", email);
             response.sendRedirect(getFrontendGoogleCallback(request) + "?token=" + jwtToken +
-                "&name=" + encodedName + "&email=" + encodedEmail + "&provider=Google");
+                "&name=" + encodedName + "&email=" + encodedEmail + "&role=" + encodedRole + "&provider=Google");
 
         } catch (Exception ex) {
             logger.error("Google OAuth callback failed: {}", ex.getMessage(), ex);
@@ -392,9 +394,11 @@ public class OAuthController {
             String encodedName = URLEncoder.encode(user.getName(), StandardCharsets.UTF_8);
             String encodedEmail = URLEncoder.encode(user.getEmail(), StandardCharsets.UTF_8);
 
+            String encodedRole = URLEncoder.encode(user.getRole() != null ? user.getRole() : "USER", StandardCharsets.UTF_8);
+
             logger.info("GitHub OAuth successful for: {}", email);
             response.sendRedirect(getFrontendGithubCallback(request) + "?token=" + jwtToken +
-                "&name=" + encodedName + "&email=" + encodedEmail + "&provider=GitHub");
+                "&name=" + encodedName + "&email=" + encodedEmail + "&role=" + encodedRole + "&provider=GitHub");
 
         } catch (Exception ex) {
             logger.error("GitHub OAuth callback failed: {}", ex.getMessage(), ex);
