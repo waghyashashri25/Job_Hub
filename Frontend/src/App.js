@@ -5,8 +5,8 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
-import { isAuthenticated, getRole } from "./utils/auth";
-import { ProtectedRoute, AdminRoute } from "./utils/ProtectedRoute";
+import { isAuthenticated } from "./utils/auth";
+import { ProtectedRoute } from "./utils/ProtectedRoute";
 
 import Navbar from "./components/Navbar";
 import Login from "./pages/Login";
@@ -20,8 +20,6 @@ import OAuthCallback from "./pages/OAuthCallback";
 import "./styles/global.css";
 
 function App() {
-  const userRole = getRole();
-
   return (
     <Router>
       <div className="app-shell">
@@ -69,9 +67,8 @@ function App() {
               path="/admin"
               element={
                 <ProtectedRoute
-                  element={
-                    <AdminRoute element={<AdminPanel />} userRole={userRole} />
-                  }
+                  element={<AdminPanel />}
+                  allowedRoles={["ADMIN"]}
                 />
               }
             />

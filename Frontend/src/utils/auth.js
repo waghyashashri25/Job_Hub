@@ -16,46 +16,42 @@ const parseTokenPayload = (token) => {
 };
 
 export const getRole = () => {
-  const storedRole = localStorage.getItem(ROLE_KEY);
-  if (storedRole) {
-    return storedRole;
-  }
-
   const token =
     localStorage.getItem(TOKEN_KEY) || localStorage.getItem(LEGACY_TOKEN_KEY);
-  if (!token) {
-    return null;
-  }
+  
+  if (token) {
+    const payload = parseTokenPayload(token);
+    if (payload) {
+      const roleClaim = payload.role || payload.roles || payload.authorities;
+      let role = null;
 
-  const payload = parseTokenPayload(token);
-  if (!payload) {
-    return null;
-  }
+      if (Array.isArray(roleClaim)) {
+        if (roleClaim.some((r) => String(r).toUpperCase().includes("ADMIN"))) {
+          role = "ADMIN";
+        } else if (roleClaim.some((r) => String(r).toUpperCase().includes("RECRUITER"))) {
+          role = "RECRUITER";
+        } else if (roleClaim.some((r) => String(r).toUpperCase().includes("USER"))) {
+          role = "USER";
+        }
+      } else if (typeof roleClaim === "string") {
+        const upper = roleClaim.toUpperCase();
+        if (upper.includes("ADMIN")) {
+          role = "ADMIN";
+        } else if (upper.includes("RECRUITER")) {
+          role = "RECRUITER";
+        } else if (upper.includes("USER")) {
+          role = "USER";
+        }
+      }
 
-  const roleClaim = payload.role || payload.roles || payload.authorities;
-  let role = null;
-
-  if (Array.isArray(roleClaim)) {
-    if (roleClaim.includes("ROLE_ADMIN") || roleClaim.includes("ADMIN")) {
-      role = "ADMIN";
-    } else if (roleClaim.includes("ROLE_USER") || roleClaim.includes("USER")) {
-      role = "USER";
+      if (role) {
+        localStorage.setItem(ROLE_KEY, role);
+        return role;
+      }
     }
   }
 
-  if (typeof roleClaim === "string") {
-    if (roleClaim.includes("ADMIN")) {
-      role = "ADMIN";
-    } else if (roleClaim.includes("USER")) {
-      role = "USER";
-    }
-  }
-
-  if (role) {
-    localStorage.setItem(ROLE_KEY, role);
-  }
-
-  return role;
+  return localStorage.getItem(ROLE_KEY) || null;
 };
 
 export const saveAuthState = (token) => {

@@ -18,5 +18,6 @@ export const ProtectedRoute = ({ element, allowedRoles }) => {
 };
 
 export const AdminRoute = ({ element, userRole }) => {
-  return userRole === "ADMIN" ? element : <Navigate to="/jobs" replace />;
+  const role = getRole() || userRole;
+  return role === "ADMIN" ? element : <Navigate to="/jobs" replace />;
 };
