@@ -3,6 +3,7 @@
 .env.local
 .env.*.local
 .env.production
+!Frontend/.env.production
 
 # IDE and Editor
 .vscode/
