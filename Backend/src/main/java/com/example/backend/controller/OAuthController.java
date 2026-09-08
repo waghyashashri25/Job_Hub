@@ -85,23 +85,26 @@ public class OAuthController {
     }
 
     private String resolveFrontendUrl(HttpServletRequest request) {
+        if (frontendUrl != null && !frontendUrl.isBlank() && !frontendUrl.contains("localhost")) {
+            return frontendUrl.replaceAll("/+$", "");
+        }
         if (request != null) {
             String origin = request.getHeader("Origin");
-            if (origin != null && !origin.isBlank() && !origin.contains("localhost")) {
+            if (origin != null && !origin.isBlank() && !origin.contains("google.com") && !origin.contains("github.com") && !origin.contains("localhost")) {
                 return origin.replaceAll("/+$", "");
             }
             String referer = request.getHeader("Referer");
             if (referer != null && !referer.isBlank()) {
                 try {
                     java.net.URI uri = new java.net.URI(referer);
-                    String hostUrl = uri.getScheme() + "://" + uri.getHost() + (uri.getPort() == -1 || uri.getPort() == 80 || uri.getPort() == 443 ? "" : ":" + uri.getPort());
-                    if (!hostUrl.contains("localhost")) {
-                        return hostUrl;
+                    String host = uri.getHost();
+                    if (host != null && !host.contains("google.com") && !host.contains("github.com") && !host.contains("localhost")) {
+                        return uri.getScheme() + "://" + host + (uri.getPort() == -1 || uri.getPort() == 80 || uri.getPort() == 443 ? "" : ":" + uri.getPort());
                     }
                 } catch (Exception ignored) {}
             }
         }
-        return frontendUrl;
+        return (frontendUrl != null && !frontendUrl.isBlank()) ? frontendUrl.replaceAll("/+$", "") : "https://job-hub-bay-alpha.vercel.app";
     }
 
     private String getFrontendGoogleCallback(HttpServletRequest request) {
