@@ -67,6 +67,51 @@ public class BackendApplication {
 				}
 			}
 		}
+		normalizeDatabaseUrl();
+	}
+
+	/**
+	 * Automatically translate cloud database connection URLs (e.g. Render / Heroku / Supabase)
+	 * from postgres://user:password@host:port/db into Spring Boot jdbc:postgresql:// format.
+	 */
+	private static void normalizeDatabaseUrl() {
+		String dbUrl = System.getenv("SPRING_DATASOURCE_URL");
+		if (dbUrl == null || dbUrl.isBlank()) {
+			dbUrl = System.getenv("DATABASE_URL");
+		}
+		if (dbUrl == null || dbUrl.isBlank()) {
+			dbUrl = System.getProperty("SPRING_DATASOURCE_URL");
+		}
+		if (dbUrl == null || dbUrl.isBlank()) {
+			dbUrl = System.getProperty("DATABASE_URL");
+		}
+		if (dbUrl != null && (dbUrl.startsWith("postgres://") || dbUrl.startsWith("postgresql://"))) {
+			try {
+				String raw = dbUrl.replaceFirst("^postgres(ql)?://", "http://");
+				java.net.URI uri = new java.net.URI(raw);
+				String host = uri.getHost();
+				int port = uri.getPort() == -1 ? 5432 : uri.getPort();
+				String path = uri.getPath();
+				String userInfo = uri.getUserInfo();
+				String query = uri.getQuery();
+				String sslParam = (query != null && query.contains("sslmode")) ? "" : (path.contains("?") ? "&sslmode=require" : "?sslmode=require");
+				String jdbcUrl = "jdbc:postgresql://" + host + ":" + port + path + sslParam;
+
+				System.setProperty("spring.datasource.url", jdbcUrl);
+				System.setProperty("SPRING_DATASOURCE_URL", jdbcUrl);
+
+				if (userInfo != null && userInfo.contains(":")) {
+					String[] parts = userInfo.split(":", 2);
+					System.setProperty("spring.datasource.username", parts[0]);
+					System.setProperty("SPRING_DATASOURCE_USERNAME", parts[0]);
+					System.setProperty("spring.datasource.password", parts[1]);
+					System.setProperty("SPRING_DATASOURCE_PASSWORD", parts[1]);
+				}
+				System.out.println("Normalized Cloud Database URL for Spring Boot JDBC connection.");
+			} catch (Exception e) {
+				System.err.println("Notice: Could not parse database URL as URI: " + e.getMessage());
+			}
+		}
 	}
 
 }
