@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from "react";
 import Pagination from "../Pagination";
-import { applicationService, careerService, userService } from "../../services/apiService";
+import { applicationService, careerService } from "../../services/apiService";
 import { generateCandidateFollowUpMessage } from "../../services/jobMatchingService";
 import "../../styles/tabs.css";
 import "../../styles/recruiter.css";

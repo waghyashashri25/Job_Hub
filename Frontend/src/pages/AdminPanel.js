@@ -11,7 +11,7 @@ const AdminPanel = () => {
   const [jobs, setJobs] = useState([]);
   const [connectors, setConnectors] = useState({});
   const [schedulerStatus, setSchedulerStatus] = useState(null);
-  const [announcement, setAnnouncement] = useState("");
+  const [, setAnnouncement] = useState("");
   const [announcementDraft, setAnnouncementDraft] = useState("");
   const [announcementActive, setAnnouncementActive] = useState(false);
 
