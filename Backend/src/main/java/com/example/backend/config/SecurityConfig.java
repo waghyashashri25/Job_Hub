@@ -86,21 +86,15 @@ public class SecurityConfig {
         String allowedOriginsEnv = System.getenv("CORS_ALLOWED_ORIGINS");
         
         if (allowedOriginsEnv != null && !allowedOriginsEnv.isEmpty()) {
-            // Production: use environment variable
-            configuration.setAllowedOrigins(List.of(allowedOriginsEnv.split(",")));
+            // Production: support both explicit origins and wildcard patterns (e.g. https://*.vercel.app)
+            configuration.setAllowedOriginPatterns(List.of(allowedOriginsEnv.split(",")));
         } else {
-            // Development: use default localhost origins
-            configuration.setAllowedOrigins(List.of(
-                "http://localhost:3000",
-                "http://localhost:3001",
-                "http://localhost:3002",
-                "http://localhost:5173",
-                "http://localhost:5174",
-                "http://127.0.0.1:3000",
-                "http://127.0.0.1:3001",
-                "http://127.0.0.1:3002",
-                "http://127.0.0.1:5173",
-                "http://127.0.0.1:5174"
+            // Development: allow localhost and common development ports
+            configuration.setAllowedOriginPatterns(List.of(
+                "http://localhost:*",
+                "http://127.0.0.1:*",
+                "https://*.vercel.app",
+                "https://*.onrender.com"
             ));
         }
         
