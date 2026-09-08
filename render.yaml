@@ -23,6 +23,8 @@ services:
         generateValue: true
       - key: CORS_ALLOWED_ORIGINS
         value: "http://localhost:3000,http://localhost:5173,https://*.vercel.app"
+      - key: FRONTEND_URL
+        value: "https://job-hub-bay-alpha.vercel.app"
       - key: JOBS_SCHEDULER_ENABLED
         value: "true"
       - key: JOBS_SCHEDULER_FIXED_RATE_MS

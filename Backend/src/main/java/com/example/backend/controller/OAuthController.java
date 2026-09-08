@@ -83,12 +83,32 @@ public class OAuthController {
                githubClientSecret != null && !githubClientSecret.isBlank();
     }
 
-    private String getFrontendGoogleCallback() {
-        return frontendUrl + "/auth/google/callback";
+    private String resolveFrontendUrl(HttpServletRequest request) {
+        if (request != null) {
+            String origin = request.getHeader("Origin");
+            if (origin != null && !origin.isBlank() && !origin.contains("localhost")) {
+                return origin.replaceAll("/+$", "");
+            }
+            String referer = request.getHeader("Referer");
+            if (referer != null && !referer.isBlank()) {
+                try {
+                    java.net.URI uri = new java.net.URI(referer);
+                    String hostUrl = uri.getScheme() + "://" + uri.getHost() + (uri.getPort() == -1 || uri.getPort() == 80 || uri.getPort() == 443 ? "" : ":" + uri.getPort());
+                    if (!hostUrl.contains("localhost")) {
+                        return hostUrl;
+                    }
+                } catch (Exception ignored) {}
+            }
+        }
+        return frontendUrl;
     }
 
-    private String getFrontendGithubCallback() {
-        return frontendUrl + "/auth/github/callback";
+    private String getFrontendGoogleCallback(HttpServletRequest request) {
+        return resolveFrontendUrl(request) + "/auth/google/callback";
+    }
+
+    private String getFrontendGithubCallback(HttpServletRequest request) {
+        return resolveFrontendUrl(request) + "/auth/github/callback";
     }
 
     /**
@@ -107,11 +127,11 @@ public class OAuthController {
      * Redirects user to Google's consent screen
      */
     @GetMapping("/google")
-    public void googleLogin(HttpServletResponse response) throws IOException {
+    public void googleLogin(HttpServletRequest request, HttpServletResponse response) throws IOException {
         if (!isGoogleConfigured()) {
             logger.error("Google OAuth is not configured. Set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET environment variables.");
-            response.sendRedirect(getFrontendGoogleCallback() + "?error=" +
-                URLEncoder.encode("Google OAuth is not configured. Please set up your Google OAuth credentials.", StandardCharsets.UTF_8));
+            response.sendRedirect(getFrontendGoogleCallback(request) + "?error=" +
+                URLEncoder.encode("Google OAuth is not configured. Please set up your Google OAuth credentials on Render.", StandardCharsets.UTF_8));
             return;
         }
 
@@ -138,11 +158,11 @@ public class OAuthController {
      * Redirects user to GitHub's authorization page
      */
     @GetMapping("/github")
-    public void githubLogin(HttpServletResponse response) throws IOException {
+    public void githubLogin(HttpServletRequest request, HttpServletResponse response) throws IOException {
         if (!isGithubConfigured()) {
             logger.error("GitHub OAuth is not configured. Set GITHUB_CLIENT_ID and GITHUB_CLIENT_SECRET environment variables.");
-            response.sendRedirect(getFrontendGithubCallback() + "?error=" +
-                URLEncoder.encode("GitHub OAuth is not configured. Please set up your GitHub OAuth credentials.", StandardCharsets.UTF_8));
+            response.sendRedirect(getFrontendGithubCallback(request) + "?error=" +
+                URLEncoder.encode("GitHub OAuth is not configured. Please set up your GitHub OAuth credentials on Render.", StandardCharsets.UTF_8));
             return;
         }
 
@@ -171,17 +191,18 @@ public class OAuthController {
     public void googleCallback(
             @RequestParam(required = false) String code,
             @RequestParam(required = false) String error,
+            HttpServletRequest request,
             HttpServletResponse response) throws IOException {
 
         if (error != null) {
             logger.warn("Google OAuth denied or errored: {}", error);
-            response.sendRedirect(getFrontendGoogleCallback() + "?error=" +
+            response.sendRedirect(getFrontendGoogleCallback(request) + "?error=" +
                 URLEncoder.encode("Google sign-in was cancelled or denied: " + error, StandardCharsets.UTF_8));
             return;
         }
 
         if (code == null || code.isBlank()) {
-            response.sendRedirect(getFrontendGoogleCallback() + "?error=" +
+            response.sendRedirect(getFrontendGoogleCallback(request) + "?error=" +
                 URLEncoder.encode("No authorization code received from Google.", StandardCharsets.UTF_8));
             return;
         }
@@ -244,12 +265,12 @@ public class OAuthController {
             String encodedEmail = URLEncoder.encode(user.getEmail(), StandardCharsets.UTF_8);
 
             logger.info("Google OAuth successful for: {}", email);
-            response.sendRedirect(getFrontendGoogleCallback() + "?token=" + jwtToken +
+            response.sendRedirect(getFrontendGoogleCallback(request) + "?token=" + jwtToken +
                 "&name=" + encodedName + "&email=" + encodedEmail + "&provider=Google");
 
         } catch (Exception ex) {
             logger.error("Google OAuth callback failed: {}", ex.getMessage(), ex);
-            response.sendRedirect(getFrontendGoogleCallback() + "?error=" +
+            response.sendRedirect(getFrontendGoogleCallback(request) + "?error=" +
                 URLEncoder.encode("Google sign-in failed: " + ex.getMessage(), StandardCharsets.UTF_8));
         }
     }
@@ -263,17 +284,18 @@ public class OAuthController {
     public void githubCallback(
             @RequestParam(required = false) String code,
             @RequestParam(required = false) String error,
+            HttpServletRequest request,
             HttpServletResponse response) throws IOException {
 
         if (error != null) {
             logger.warn("GitHub OAuth denied or errored: {}", error);
-            response.sendRedirect(getFrontendGithubCallback() + "?error=" +
+            response.sendRedirect(getFrontendGithubCallback(request) + "?error=" +
                 URLEncoder.encode("GitHub sign-in was cancelled or denied: " + error, StandardCharsets.UTF_8));
             return;
         }
 
         if (code == null || code.isBlank()) {
-            response.sendRedirect(getFrontendGithubCallback() + "?error=" +
+            response.sendRedirect(getFrontendGithubCallback(request) + "?error=" +
                 URLEncoder.encode("No authorization code received from GitHub.", StandardCharsets.UTF_8));
             return;
         }
@@ -367,12 +389,12 @@ public class OAuthController {
             String encodedEmail = URLEncoder.encode(user.getEmail(), StandardCharsets.UTF_8);
 
             logger.info("GitHub OAuth successful for: {}", email);
-            response.sendRedirect(getFrontendGithubCallback() + "?token=" + jwtToken +
+            response.sendRedirect(getFrontendGithubCallback(request) + "?token=" + jwtToken +
                 "&name=" + encodedName + "&email=" + encodedEmail + "&provider=GitHub");
 
         } catch (Exception ex) {
             logger.error("GitHub OAuth callback failed: {}", ex.getMessage(), ex);
-            response.sendRedirect(getFrontendGithubCallback() + "?error=" +
+            response.sendRedirect(getFrontendGithubCallback(request) + "?error=" +
                 URLEncoder.encode("GitHub sign-in failed: " + ex.getMessage(), StandardCharsets.UTF_8));
         }
     }
