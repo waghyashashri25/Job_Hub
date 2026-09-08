@@ -44,16 +44,22 @@ public class DatabaseConnector implements JobSourceConnector {
         long start = System.currentTimeMillis();
 
         try {
-            org.springframework.data.domain.PageRequest pageable = org.springframework.data.domain.PageRequest.of(0, 5000);
+            org.springframework.data.domain.PageRequest pageable = org.springframework.data.domain.PageRequest.of(0, 1000);
             boolean hasKw = keyword != null && !keyword.isBlank();
             boolean hasLoc = location != null && !location.isBlank();
 
             // 1. Always retrieve all active recruiter direct jobs so they are NEVER missed
             List<Job> recruiterJobs = jobRepository.findRecruiterDirectJobs();
 
-            // 2. Retrieve indexed candidate jobs from repository
+            // 2. Retrieve indexed candidate jobs from repository with precision SQL filtering
             List<Job> matchedDb;
-            if (hasKw) {
+            if (hasKw && hasLoc) {
+                if (locationNormalizer.isWorldwideQuery(location) || locationNormalizer.isAllIndiaQuery(location) || locationNormalizer.isExplicitRemoteQuery(location)) {
+                    matchedDb = jobRepository.searchByKeywordFlexible(keyword.trim(), pageable).getContent();
+                } else {
+                    matchedDb = jobRepository.searchByKeywordAndLocation(keyword.trim(), location.trim(), pageable).getContent();
+                }
+            } else if (hasKw) {
                 matchedDb = jobRepository.searchByKeywordFlexible(keyword.trim(), pageable).getContent();
             } else if (hasLoc) {
                 if (locationNormalizer.isWorldwideQuery(location) || locationNormalizer.isAllIndiaQuery(location) || locationNormalizer.isExplicitRemoteQuery(location)) {

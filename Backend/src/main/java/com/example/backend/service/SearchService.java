@@ -129,14 +129,14 @@ public class SearchService {
             }, searchExecutor));
         }
 
-        // 2. High-Performance 4.5-second Non-Blocking Deadline (Allows multi-hub APIs to finish while maintaining fast UX)
+        // 2. High-Performance 7.0-second Non-Blocking Deadline (Allows cloud database and multi-hub APIs to finish while maintaining fast UX)
         try {
-            CompletableFuture.allOf(futureMap.values().toArray(new CompletableFuture[0])).get(4500, TimeUnit.MILLISECONDS);
+            CompletableFuture.allOf(futureMap.values().toArray(new CompletableFuture[0])).get(7000, TimeUnit.MILLISECONDS);
             for (Map.Entry<String, CompletableFuture<ConnectorResult>> entry : futureMap.entrySet()) {
                 resultMap.put(entry.getKey(), entry.getValue().getNow(createTimeoutResult(entry.getKey())));
             }
         } catch (Exception ex) {
-            logger.info("Non-blocking 4.5s search deadline reached. Immediate results ready; remaining connectors processing in background.");
+            logger.info("Non-blocking 7.0s search deadline reached. Immediate results ready; remaining connectors processing in background.");
             for (Map.Entry<String, CompletableFuture<ConnectorResult>> entry : futureMap.entrySet()) {
                 if (entry.getValue().isDone()) {
                     try {

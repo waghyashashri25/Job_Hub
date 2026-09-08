@@ -49,12 +49,10 @@ public interface JobRepository extends JpaRepository<Job, Long> {
            "ORDER BY j.postedTime DESC")
     Page<Job> searchByLocation(@Param("location") String location, Pageable pageable);
 
-    /**
-     * Search by keyword AND location
-     */
     @Query("SELECT j FROM Job j WHERE " +
            "(LOWER(j.title) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
-           "OR LOWER(j.description) LIKE LOWER(CONCAT('%', :keyword, '%'))) " +
+           "OR LOWER(j.description) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+           "OR LOWER(j.company) LIKE LOWER(CONCAT('%', :keyword, '%'))) " +
            "AND LOWER(j.location) LIKE LOWER(CONCAT('%', :location, '%')) " +
            "ORDER BY j.postedTime DESC")
     Page<Job> searchByKeywordAndLocation(
