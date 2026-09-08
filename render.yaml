@@ -1,7 +1,6 @@
 databases:
   - name: job-portal-db
     databaseName: job_portal
-    user: postgres
     plan: free
 
 services:
