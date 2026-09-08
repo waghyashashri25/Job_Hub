@@ -64,6 +64,10 @@ function App() {
               }
             />
             <Route
+              path="/recuiter"
+              element={<Navigate to="/recruiter" replace />}
+            />
+            <Route
               path="/admin"
               element={
                 <ProtectedRoute
