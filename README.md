@@ -1,354 +1,280 @@
-# Job Portal - Complete Guide
+# JobHub — Modern Job Aggregator & Career Intelligence Platform
 
-A modern, full-stack job portal platform built with **React** (Frontend) and **Spring Boot** (Backend). The application features a responsive UI with job listings, application tracking, and advanced search capabilities.
-
-## Features
-
-- **Job Discovery**: Browse and search job listings with advanced filtering
-- **Job Matching**: Intelligent job recommendations based on skills and preferences
-- **Application Tracking**: Track all job applications in one place
-- **User Authentication**: Secure JWT-based authentication with login/signup
-- **Admin Dashboard**: Administrative panel for job management
-- **Responsive Design**: Works seamlessly on desktop, tablet, and mobile
-- **Real-time Search**: Live search with trending skills and recent applications
-- **Premium UI**: Modern, professional design with smooth animations
-
-## Tech Stack
-
-### Frontend
-
-- **React 18.2** - UI framework
-- **React Router 6** - Client-side routing
-- **Axios** - HTTP client
-- **Vanilla CSS** - Custom styling with modern CSS features (gradients, animations, backdrop-filter)
-- **Node.js** - Runtime environment
-
-### Backend
-
-- **Spring Boot** - Java web framework
-- **Maven** - Build tool and dependency management
-- **PostgreSQL/MySQL** - Database (configurable)
-- **Spring Security** - Authentication and authorization
-- **JWT** - Token-based security
-- **JPA/Hibernate** - ORM
-
-## Prerequisites
-
-### Frontend Requirements
-
-- **Node.js** (v14 or higher)
-- **npm** (v6 or higher) or **yarn**
-
-### Backend Requirements
-
-- **Java** (JDK 11 or higher)
-- **Maven** (v3.6 or higher)
-- **PostgreSQL** or **MySQL** database
-
-## Project Structure
-
-```
-job-portal-project/
-├── Frontend/                 # React application
-│   ├── src/
-│   │   ├── components/      # Reusable React components
-│   │   ├── pages/           # Page components
-│   │   ├── services/        # API services
-│   │   ├── styles/          # CSS files
-│   │   ├── utils/           # Utility functions
-│   │   ├── App.js
-│   │   └── index.js
-│   ├── package.json
-│   ├── .env.example         # Frontend environment template
-│   └── public/
-│
-├── Backend/                  # Spring Boot application
-│   ├── src/
-│   │   ├── main/
-│   │   │   ├── java/com/example/  # Java source code
-│   │   │   └── resources/         # Configuration files
-│   │   └── test/            # Test files
-│   ├── pom.xml             # Maven configuration
-│   ├── .env.example        # Backend environment template
-│   ├── mvnw                # Maven wrapper (Unix/Mac)
-│   └── mvnw.cmd            # Maven wrapper (Windows)
-│
-└── Documentation/          # Project documentation
-    ├── README.md           # This file
-    ├── ARCHITECTURE_GUIDE.md
-    └── ... (other guides)
-```
-
-## Installation & Setup
-
-### Clone the Repository
-
-```bash
-git clone <repository-url>
-cd job-portal-project
-```
-
-### Frontend Setup
-
-1. **Navigate to Frontend directory**
-
-   ```bash
-   cd Frontend
-   ```
-
-2. **Install dependencies**
-
-   ```bash
-   npm install
-   ```
-
-3. **Create environment file**
-
-   ```bash
-   cp .env.example .env.local
-   ```
-
-4. **Update .env.local with your backend URL**
-
-   ```
-   REACT_APP_API_URL=http://localhost:8080/api
-   REACT_APP_ENVIRONMENT=development
-   ```
-
-5. **Start the development server**
-   ```bash
-   npm start
-   ```
-   The application will open at `http://localhost:3000`
-
-### Backend Setup
-
-1. **Navigate to Backend directory**
-
-   ```bash
-   cd Backend
-   ```
-
-2. **Create environment file**
-
-   ```bash
-   cp .env.example .env
-   ```
-
-3. **Update .env with database credentials**
-
-   ```
-   DB_URL=jdbc:postgresql://localhost:5432/job_portal
-   DB_USERNAME=postgres
-   DB_PASSWORD=your_password
-   JWT_SECRET=your_secret_key
-   ```
-
-4. **Build the project**
-
-   ```bash
-   # Using Maven wrapper (no Maven installation required)
-   ./mvnw clean package -DskipTests  # Unix/Mac
-   mvnw.cmd clean package -DskipTests  # Windows
-
-   # OR using Maven (if installed)
-   mvn clean package -DskipTests
-   ```
-
-5. **Run the application**
-   ```bash
-   java -jar target/Backend-0.0.1-SNAPSHOT.jar
-   ```
-   The API server will start at `http://localhost:8080`
-
-### Database Setup (PostgreSQL Example)
-
-1. **Create database**
-
-   ```bash
-   createdb job_portal
-   ```
-
-2. **Configure database in Backend/.env**
-   - Set `DB_URL=jdbc:postgresql://localhost:5432/job_portal`
-   - Set `DB_USERNAME=postgres`
-   - Set `DB_PASSWORD=your_password`
-
-3. **Tables will be created automatically** by Hibernate (set `SPRING_JPA_HIBERNATE_DDL_AUTO=update` in .env)
-
-## Running the Application
-
-### Development Mode
-
-**Terminal 1 - Backend**
-
-```bash
-cd Backend
-./mvnw spring-boot:run
-# Server runs on http://localhost:8080
-```
-
-**Terminal 2 - Frontend**
-
-```bash
-cd Frontend
-npm start
-# App runs on http://localhost:3000
-```
-
-### Production Build
-
-**Backend**
-
-```bash
-cd Backend
-./mvnw clean package
-java -jar target/Backend-0.0.1-SNAPSHOT.jar
-```
-
-**Frontend**
-
-```bash
-cd Frontend
-npm run build
-# Build output in Frontend/build/
-```
-
-## API Endpoints
-
-### Jobs
-
-- `GET /api/jobs` - Get all jobs
-- `GET /api/jobs/{id}` - Get job details
-- `POST /api/jobs` - Create job (admin)
-- `PUT /api/jobs/{id}` - Update job (admin)
-- `DELETE /api/jobs/{id}` - Delete job (admin)
-
-### Applications
-
-- `GET /api/applications` - Get user applications
-- `POST /api/applications` - Apply to job
-- `GET /api/applications/{id}` - Get application details
-- `PUT /api/applications/{id}` - Update application status
-
-### Authentication
-
-- `POST /api/auth/signup` - Register new user
-- `POST /api/auth/login` - User login
-- `POST /api/auth/logout` - User logout
-
-### Search & Recommendations
-
-- `GET /api/jobs/search` - Search jobs with filters
-- `GET /api/jobs/recommended` - Get recommended jobs
-- `GET /api/jobs/trending-skills` - Get trending skills
-
-## Environment Variables
-
-### Frontend (.env.local)
-
-```
-REACT_APP_API_URL=http://localhost:8080/api
-REACT_APP_ENVIRONMENT=development
-REACT_APP_ENABLE_DEBUG_MODE=false
-```
-
-### Backend (.env)
-
-```
-DB_URL=jdbc:postgresql://localhost:5432/job_portal
-DB_USERNAME=postgres
-DB_PASSWORD=your_password
-JWT_SECRET=your_secret_key
-SERVER_PORT=8080
-SPRING_PROFILES_ACTIVE=dev
-```
-
-**⚠️ Security Note**: Never commit `.env` files to version control. Use `.env.example` as a template and create local `.env` files for development.
-
-## Troubleshooting
-
-### Frontend won't connect to backend
-
-- Verify Backend is running on `http://localhost:8080`
-- Check `REACT_APP_API_URL` in `.env.local`
-- Check browser console for CORS errors
-
-### Backend database connection errors
-
-- Ensure PostgreSQL/MySQL is running
-- Verify credentials in `.env` file
-- Check database URL and port are correct
-
-### Port already in use
-
-- Frontend (3000): `lsof -i :3000` and kill process if needed
-- Backend (8080): `lsof -i :8080` and kill process if needed
-
-### Maven/Node version issues
-
-- Use Maven wrapper: `./mvnw` instead of `mvn`
-- Check Node version: `node --version` (should be v14+)
-- Check npm version: `npm --version` (should be v6+)
-
-## Testing
-
-### Frontend Tests
-
-```bash
-cd Frontend
-npm test
-```
-
-### Backend Tests
-
-```bash
-cd Backend
-./mvnw test
-```
-
-## Security Best Practices
-
-1. **Environment Variables**: Never commit `.env` files. Use `.env.example` templates.
-2. **JWT Secret**: Use a strong, randomly generated JWT secret in production.
-3. **Database Password**: Use a secure password for database access.
-4. **CORS**: Configure CORS properly in Backend (only allow trusted origins).
-5. **Dependency Updates**: Regularly update dependencies for security patches.
-6. **API Authentication**: All protected endpoints require valid JWT token.
-
-## Deployment
-
-### Deploy Frontend
-
-- Build: `npm run build`
-- Deploy `Frontend/build/` folder to static hosting (Netlify, Vercel, AWS S3, Azure Static Web Apps, etc.)
-
-### Deploy Backend
-
-- Build: `./mvnw clean package`
-- Deploy JAR file to cloud server (Heroku, AWS EC2, Azure App Service, Google Cloud Run, etc.)
-
-## Contributing
-
-1. Create a feature branch: `git checkout -b feature/your-feature`
-2. Commit changes: `git commit -am 'Add feature'`
-3. Push to branch: `git push origin feature/your-feature`
-4. Create a Pull Request
-
-## License
-
-This project is licensed under the MIT License - see LICENSE file for details.
-
-## Support & Questions
-
-For issues, questions, or suggestions:
-
-1. Check existing documentation in the project
-2. Review API response logs in Backend console
-3. Check browser console in Frontend for errors
-4. Open an issue with detailed description
+A full-stack career platform built with **Spring Boot 3** and **React 18**. JobHub aggregates live job listings across 9+ external job platforms, provides an ATS-style resume parser with skill gap analysis, generates interactive career roadmaps, and includes full application lifecycle tracking for candidates and recruiters.
 
 ---
 
-**Last Updated**: 2024
-**Version**: 1.0.0
+## Key Features
+
+- **Multi-Source Job Aggregator**: Fetches and deduplicates job listings across platforms including Arbeitnow, Himalayas, Remotive, USAJobs, Jooble, JSearch, and Greenhouse with circuit-breaker fault tolerance.
+- **Relevance & Search Engine**: Custom multi-factor scoring matching keywords, tech stacks, experience levels, and location normalization (city/country/remote).
+- **ATS Resume Intelligence**: Built-in resume parser (PDF & DOCX using Apache PDFBox and Apache POI) extracting skills, experience, and contact info, providing instant match scoring against any job.
+- **Personalized Career Roadmaps**: Generates progressive milestone roadmaps, recommended learning topics, and skill gap breakdowns based on target roles.
+- **Full Application Pipeline**: Track application statuses (`Applied`, `Under Review`, `Interview`, `Accepted`, `Rejected`) with notes, reminders, and historical tracking.
+- **Authentication & Security**:
+  - JWT token-based session management with configurable expiration.
+  - OAuth 2.0 social login via Google and GitHub.
+  - Email OTP verification and password reset powered by JavaMailSender (SMTP).
+- **Recruiter & Admin Tools**:
+  - Post and manage job openings directly.
+  - Review applicant submissions, resumes, and candidate pipelines.
+  - Administrative telemetry: user management, aggregate stats, cache eviction.
+
+---
+
+## Tech Stack
+
+### Backend
+- **Framework**: Spring Boot 3.3.5 (Java 17)
+- **Security**: Spring Security 6, JJWT (0.11.5)
+- **Database & Persistence**: PostgreSQL, Spring Data JPA / Hibernate
+- **Caching**: Caffeine In-Memory Cache
+- **Document Processing**: Apache PDFBox 3.0.2, Apache POI 5.2.5
+- **Mail Delivery**: Spring Mail (JavaMailSender / SMTP)
+- **Build Tool**: Apache Maven (Maven Wrapper included)
+
+### Frontend
+- **Framework**: React 18.2 (Create React App)
+- **Routing**: React Router DOM v6
+- **HTTP Client**: Axios (configured with interceptors for JWT injection and token refresh)
+- **Styling**: Vanilla CSS (Modular CSS files with glassmorphism design tokens, CSS custom properties, responsive breakpoints)
+
+---
+
+## System Architecture
+
+```text
+               +--------------------------------------------------+
+               |                  Browser / UI                    |
+               |       React 18 SPA (Port 3000 / 5173)            |
+               +--------------------------------------------------+
+                                        |
+                                        | HTTP / REST (JWT Auth)
+                                        v
+               +--------------------------------------------------+
+               |               Spring Boot 3 API                  |
+               |                  (Port 8080)                     |
+               +--------------------------------------------------+
+                 /        |                |             \
+                /         |                |              \
+               v          v                v               v
+       +------------+ +------------+ +------------+ +------------------+
+       | PostgreSQL | |  Caffeine  | | PDFBox/POI | |  External APIs   |
+       |  Database  | | Cache Layer| | Parser     | | (RemoteOK,       |
+       |            | |            | | Service    | |  Himalayas, etc.)|
+       +------------+ +------------+ +------------+ +------------------+
+```
+
+---
+
+## Project Structure
+
+```text
+Job-portal-project/
+├── Backend/
+│   ├── src/main/java/com/example/backend/
+│   │   ├── config/          # Security, AppConfig, Cache, DB optimization
+│   │   ├── connector/       # Live connectors (Adzuna, Himalayas, USAJobs, etc.)
+│   │   ├── controller/      # REST API Controllers (Jobs, Auth, Career, Admin, Recruiter)
+│   │   ├── dto/             # Data Transfer Objects
+│   │   ├── model/           # JPA Entities (User, Job, Application, VerificationOtp, ChatMessage)
+│   │   ├── repository/      # Spring Data JPA Repositories
+│   │   └── service/         # Business logic, CareerIntelligence, ResumeParser, Mailer
+│   ├── src/main/resources/
+│   │   └── application.properties
+│   ├── pom.xml
+│   ├── start-backend.ps1    # Automated port-clearing backend launcher
+│   └── mvnw.cmd
+├── Frontend/
+│   ├── public/              # Static index.html and assets
+│   ├── src/
+│   │   ├── components/      # JobCard, CountryPhoneInput, FilterSidebar, Modals, Navbar
+│   │   ├── pages/           # Dashboard, Login, Signup, RecruiterPortal, AdminPanel
+│   │   ├── services/        # apiService, axiosInstance, jobMatchingService, resumeService
+│   │   ├── styles/          # Modular CSS stylesheets
+│   │   ├── utils/           # auth token helpers, link sanitizers
+│   │   ├── App.js
+│   │   └── index.js
+│   └── package.json
+├── .env.example             # Environment variable template
+├── init-db.sql              # Pre-seeded job postings dataset
+├── load-db.ps1              # Database seed script for PostgreSQL
+├── clear-db.ps1             # Database reset utility
+└── README.md
+```
+
+---
+
+## Getting Started
+
+### Prerequisites
+- **Java**: JDK 17 or higher
+- **Node.js**: v18.0.0 or higher (npm v9+)
+- **PostgreSQL**: v14 or higher running on localhost:5432
+
+---
+
+### Step 1: Database Setup
+
+1. Open PostgreSQL CLI (`psql`) or pgAdmin and create the database:
+   ```sql
+   CREATE DATABASE job_portal;
+   ```
+2. *(Optional)* Seed initial job postings and platform data using the included script:
+   ```powershell
+   # Windows PowerShell
+   .\load-db.ps1
+   ```
+   Or manually load the SQL file:
+   ```bash
+   psql -U postgres -d job_portal -f init-db.sql
+   ```
+
+---
+
+### Step 2: Environment Configuration
+
+Create a `.env` file in the project root by copying the template:
+
+```bash
+cp .env.example .env
+```
+
+Edit `.env` with your local credentials:
+
+```ini
+# Database
+SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/job_portal
+SPRING_DATASOURCE_USERNAME=postgres
+SPRING_DATASOURCE_PASSWORD=your_postgres_password
+
+# JWT Authentication
+JWT_SECRET=your_super_secret_signing_key_min_32_characters_long
+JWT_TOKEN_VALIDITY_MS=604800000
+
+# Social OAuth (Optional for local testing)
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+GITHUB_CLIENT_ID=
+GITHUB_CLIENT_SECRET=
+
+# Email Delivery (Gmail SMTP App Password for OTP verification)
+SPRING_MAIL_HOST=smtp.gmail.com
+SPRING_MAIL_PORT=587
+SPRING_MAIL_USERNAME=your_email@gmail.com
+SPRING_MAIL_PASSWORD=your_16_char_gmail_app_password
+APP_MAIL_FROM_NAME="JobHub Platform"
+APP_MAIL_FROM_EMAIL=your_email@gmail.com
+```
+
+> **Note**: `BackendApplication.java` will automatically parse and load the root `.env` file when starting up.
+
+---
+
+### Step 3: Run the Backend
+
+Navigate to the `Backend` directory and start the Spring Boot server:
+
+```powershell
+# Using the PowerShell helper (releases busy ports automatically)
+.\start-backend.ps1
+
+# Or standard Maven wrapper
+cd Backend
+.\mvnw.cmd spring-boot:run
+```
+
+*(On Linux / macOS)*:
+```bash
+cd Backend
+chmod +x mvnw
+./mvnw spring-boot:run
+```
+
+The backend server starts on **http://localhost:8080**.
+
+---
+
+### Step 4: Run the Frontend
+
+In a separate terminal:
+
+```bash
+cd Frontend
+npm install
+npm start
+```
+
+The React app will launch automatically at **http://localhost:3000**.
+
+---
+
+## API Endpoints Reference
+
+### Authentication & Account
+| Method | Endpoint | Description | Auth Required |
+|---|---|---|---|
+| `POST` | `/api/auth/register` | Register new candidate or recruiter | No |
+| `POST` | `/api/auth/login` | Authenticate and obtain JWT token | No |
+| `POST` | `/api/auth/send-otp` | Send verification OTP via email | No |
+| `POST` | `/api/auth/verify-otp` | Verify OTP code | No |
+| `POST` | `/api/auth/reset-password` | Reset forgotten password | No |
+| `GET` | `/api/oauth/google/url` | Get Google OAuth redirect link | No |
+| `GET` | `/api/oauth/github/url` | Get GitHub OAuth redirect link | No |
+
+### Jobs & Discovery
+| Method | Endpoint | Description | Auth Required |
+|---|---|---|---|
+| `GET` | `/api/jobs` | Paginated list of active jobs | No |
+| `GET` | `/api/jobs/search` | Search with query, location, and platform filters | No |
+| `GET` | `/api/jobs/{id}` | Get individual job details | No |
+| `GET` | `/api/jobs/recommended` | Candidate personalized job recommendations | Yes |
+| `GET` | `/api/jobs/trending-skills` | Get high-demand skills in current market | No |
+| `POST` | `/api/jobs` | Create new job posting (Recruiter/Admin) | Yes |
+
+### Career Intelligence & ATS
+| Method | Endpoint | Description | Auth Required |
+|---|---|---|---|
+| `POST` | `/api/career/parse-resume` | Upload and parse PDF/DOCX resume file | Yes |
+| `POST` | `/api/career/match-analysis` | Compare candidate skills against target job | Yes |
+| `GET` | `/api/career/roadmap` | Generate role roadmap and learning milestones | Yes |
+
+### Applications Pipeline
+| Method | Endpoint | Description | Auth Required |
+|---|---|---|---|
+| `GET` | `/api/applications/user` | Fetch all applications submitted by candidate | Yes |
+| `POST` | `/api/applications/apply/{jobId}` | Submit job application | Yes |
+| `PUT` | `/api/applications/{id}/status` | Update stage (`Applied`, `Interview`, etc.) | Yes |
+| `DELETE` | `/api/applications/{id}` | Withdraw an application | Yes |
+
+---
+
+## Testing
+
+Run unit and integration tests across the stack:
+
+```bash
+# Run backend tests
+cd Backend
+.\mvnw.cmd test
+
+# Run frontend tests
+cd Frontend
+npm test -- --watchAll=false
+```
+
+---
+
+## Contributing
+
+1. Fork the repository.
+2. Create your feature branch (`git checkout -b feature/new-connector`).
+3. Commit your changes (`git commit -m 'Add new job aggregator connector'`).
+4. Push to the branch (`git push origin feature/new-connector`).
+5. Open a Pull Request.
+
+---
+
+## License
+
+This project is licensed under the MIT License.
